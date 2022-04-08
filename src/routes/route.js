@@ -17,17 +17,83 @@ const router = express.Router();
 //     res.send('My first ever api!')
 // });
 
-router.get('/movies', function(req, res) {
-   let movie =["Batman","Spider Man","Lord of Rings","Eternals","RRR"]
-     res.send(movie)
+router.get('/movies', function (req, res) { 
+  let movies = [ "Batman","Spider Man","Lord of Rings","Eternals","RRR" ];
+    res.send(movies)
 });
 
-router.get('/movies/:indexNumber', function(req, res) {
-  let movie =["Batman","Spider Man","Lord of Rings","Eternals","RRR","83"]
-  let index = req.params.indexNumber;
-  res.status(404).send(index);
-    res.send(movie)
+router.get('/movies/:indexNumber', function (req, res) { 
+  let movies = ["Batman","Spider Man","Lord of Rings","Eternals","RRR" ];
+  
+  let index = req.params.indexNumber
+  
+  console.log(index);
+  if(index < 0 || index >= movies.length)  {
+       res.status(404).send("invalid index")
+  }
+  else{
+      for(let i = 0 ; i < movies.length ; i++){
+
+          if(i == index){
+               res.send(movies[index]);
+          }
+      }
+    
+  }   
 });
+
+router.get('/films', function (req, res) { 
+  //let movies = [ "Batman","Spider Man","Lord of Rings","Eternals","RRR" ];
+  let movies = [ {
+      'id': 1,
+      'name': 'The Shining'
+     }, 
+     {
+      'id': 2,
+      'name': 'Incendies'
+     }, {
+      'id': 3,
+      'name': 'Rang de Basanti'
+     }, {
+      'id': 4,
+      'name': 'Finding Nemo'
+      
+     }]
+     
+  res.send(movies)
+});
+
+
+router.get('/films/:filmId', function (req, res) { 
+  //let movies = ["Batman","Spider Man","Lord of Rings","Eternals","RRR"];
+  
+  let filmId = req.params.filmId
+  
+  let movies = [ {
+      'id': 1,
+      'name': 'The Shining'
+     }, 
+     {
+      'id': 2,
+      'name': 'Incendies'
+     }, {
+      'id': 3,
+      'name': 'Rang de Basanti'
+     }, {
+      'id': 4,
+      'name': 'Finding Nemo'
+      
+     }]
+
+     movies.map(function(obj) {
+         if(obj.id == filmId){
+             return res.send(obj);
+         }
+     })
+     
+  res.status(404).send('No movie exists with this id')
+});
+
 
 
 

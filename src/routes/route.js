@@ -25,7 +25,7 @@ router.get('/movies', function (req, res) {
 router.get('/movies/:indexNumber', function (req, res) { 
   let movies = ["Batman","Spider Man","Lord of Rings","Eternals","RRR" ];
   
-  let index = req.params.indexNumber
+  let index = req.params.indexNumber;
   
   console.log(index);
   if(index < 0 || index >= movies.length)  {

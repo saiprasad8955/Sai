@@ -34,9 +34,9 @@ router.post('/players', function (req, res) {
             ],
         },
     ]
-    let x= req.body;
-    console.log(x);
-    res.send(players);
+    
+    console.log(req.body);
+    res.send("sdjfkjskjvcnm");
 });
 
 

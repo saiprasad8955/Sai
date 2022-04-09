@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const git = require ("../controllers//randomController");
+
 let players =
 [
     {
@@ -31,19 +31,28 @@ let players =
             "soccer"
         ],
     },
+    
 ]
 
+
+
 router.post('/players', function (req, res) {
-  let x = req.body.name ;
-  players.map(function(obj){
-   if(obj.name == x){
-      res.send("Player Already Exists")
+  let x = req.body ;
+  let playersName = x.name;
+for(let i=0;i<players.length;i++){
+    if(players[i].name == playersName){
+        res.send("Player Already Exists")
     }
-    // let obj1 = {name:(req.body.name),status: true};
-  //   // console.log(obj1);
-  // let y = players.push(obj1)
-  res.send({name : (req.body.name), status : true});
- });
+}
+players.push(x);
+res.send(players);
+
+//   players.map(function(obj){
+//    if(obj.name == x){
+//       res.send("Player Already Exists")
+//     }
+//   res.send({name : (req.body.name), status : true});
+//     });
 }),
 
 module.exports = router

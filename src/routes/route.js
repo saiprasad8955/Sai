@@ -18,7 +18,7 @@ router.post("/getBooksInYear",bookcontroller.getBooksInYear )
 
 /// 5.1  e.g if body had { name: “hi”} then you would fetch the books with this name
 /// 5.2  if body had { year: 2020} then you would fetch the books in this year
-router.get("/getParticularBooks", bookcontroller.getParticularBooks)
+router.post("/getParticularBooks", bookcontroller.getParticularBooks)
 
 /// 6. request to return all books who have an Indian price tag of “100INR” or “200INR” or “500INR” 
 router.get("/getXINRBooks",bookcontroller.getXINRBooks )

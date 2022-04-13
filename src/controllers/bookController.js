@@ -17,16 +17,16 @@ const getBookData= async function (req, res) {
     res.send({ message: allBookmodels });
   }
 
-  const getBooksInYear =async function (req, res) {
-    let inYear= req.body.year                                                                             //fine
+  const getBooksInYear =async function (req, res) {  
+    let inYear= req.body                                                                             //fine
       let allBookmodels= await BookModel1.find({year: inYear})
       res.send({msg: allBookmodels})
   }
 
 
  const getParticularBooks = async function (req, res) {
-    let key= req.query
-    let ParticularBooks= await BookModel1.find(key).select({_id:0, _v: 0,createdAt:0, updatedAt:0})    // fine
+    let condition = req.body
+    let ParticularBooks= await BookModel1.find(condition)    // fine
     res.send({msg: ParticularBooks})
     
 }

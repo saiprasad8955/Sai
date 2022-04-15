@@ -19,11 +19,15 @@ const allController = require("../controllers/allController")
 
 // router.post('/create-author', authorController.createAuthor)
 
-router.post('/create-newAuther', allController.createAuthor)
+router.post('/create-newAuthor', allController.createAuthor)
+
+router.post('/create-newPublisher', allController.createNewPublisher)
 
 router.post('/create-newBook', allController.createNewBook)
 
-router.post('/create-newPublisher', allController.createNewPublisher)
+router.get('/getallNewBook', allController.getallNewBook)
+
+
 
 
 

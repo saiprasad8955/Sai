@@ -2,7 +2,7 @@ const authorModel = require("../models/newAuthor.js")
 const publisherModel = require("../models/newPublisher")
 const bookModel = require("../models/newBook")
 
-
+// 1.  Write a POST api that creates an author from the details in request body.
 const createNewAuthor = async function (req, res) {
 
     const data = req.body;
@@ -10,24 +10,36 @@ const createNewAuthor = async function (req, res) {
     res.send({ message: authors });
 }
 
-
+// 2. Write a POST api that creates a publisher from the details in the request body.
 const createNewPublisher = async function (req, res) {
     const data = req.body;
     const publisher = await publisherModel.create(data);
     res.send({ message: publisher });
 }
 
+// 3.  Write a POST api that creates a book from the details in the request body. The api takes both the author and publisher from the request body.
 const createNewBook = async function (req, res) {
     const data = req.body;
     const book = await bookModel.create(data);
-    res.send({ message: book });
+    res.send({ message: book })
 }
 
 
 
-module.exports.createAuthor = createNewAuthor
-module.exports.createNewPublisher = createNewPublisher
-module.exports.createNewBook = createNewBook
+// 4.get all boks
+const getallNewBook = async function (req, res) {
+   // let al1lBooks = await bookModel.find()//.populate("Authorpop").populate("NewPublisherpop");
+    let allBooks = await bookModel.find();
+    console.log(allBooks)
+    res.send({msg :allBooks})
+}
+
+
+
+module.exports.createAuthor = createNewAuthor;
+module.exports.createNewPublisher = createNewPublisher;
+module.exports.createNewBook = createNewBook;
+module.exports.getallNewBook = getallNewBook;
 
 
 

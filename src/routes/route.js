@@ -1,23 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const controller = require("../controllers/book_author_controllers.js")
-// const UserModel= require("../models/userModel.js")
-const UserController= require("../controllers/userController")
-const BookController= require("../controllers/bookController")
-const authorController = require('../controllers/authorController')
-
-router.post("/createUser", controller.createNewAuthors  )
-
-router.post("/createBook", controller.createNewBook  )
-
-router.get("/allBooks", controller.allBooks)
-
-router.get("/updateBookPrice", controller.updateBookPrice)
-
-router.get("/authorNames", controller.authorNames)
+const controller = require("../controllers/book_author_controllers")
 
 
 
-router.post('/create-author', authorController.createAuthor)
+
+router.post("/createAuthor",controller.createBook)
+
+router.post("/createBook",controller.createBook)
+
+router.get("/getBooksByAuthorId",controller.getBooksByAuthorId)
+
+router.get("/getBookAndUpdate",controller.getBookAndUpdate)
+
+
+router.get("/findRespAuthors",controller.findRespAuthors)
+
+
+
+
 
 module.exports = router;

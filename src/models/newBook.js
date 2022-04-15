@@ -6,15 +6,15 @@ const newBookSchema = new mongoose.Schema(
         name : String ,
 		author : {
             type : authorId,
-            ref : "Authorpop"
+            ref : "newAuthor"
         } ,
 	    price : Number ,
         ratings: Number,
 		publisher: {
             type : authorId,
-            ref : "NewPublisherpop"
+            ref : "newPublisher"
         }
 	},
     { timestamps: true } )
 
-module.exports = mongoose.model( 'NewBookPop', newBookSchema )
+module.exports = mongoose.model( 'newBook', newBookSchema )

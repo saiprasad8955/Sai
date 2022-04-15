@@ -7,4 +7,4 @@ const newPublisherSchema = new mongoose.Schema(
     },
     { timestamps: true })
 
-module.exports = mongoose.model( 'NewPublisherpop' , newPublisherSchema )
+module.exports = mongoose.model( 'newPublisher' , newPublisherSchema )

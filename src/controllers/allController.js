@@ -1,6 +1,6 @@
 const authorModel = require("../models/newAuthor.js")
-const publisherModel = require("../models/newPublisher")
-const bookModel = require("../models/newBook")
+const publisherModel = require("../models/newPublisher.js")
+const bookModel = require("../models/newBook.js")
 
 // 1.  Write a POST api that creates an author from the details in request body.
 module.exports.createAuthor = async function (req, res) {
@@ -19,24 +19,47 @@ module.exports.createNewPublisher = async function (req, res) {
 
 // 3.  Write a POST api that creates a book from the details in the request body. The api takes both the author and publisher from the request body.
 module.exports.createNewBook = async function (req, res) {
-    if () {
-        const data = req.body;
+    const data = req.body;
+    if (data.author && data.publisher) {
 
-        const book = await bookModel.create(data);
-        res.send({ message: book })
-    } else {
-        res.send("Please Enter the Author Id It must be entered")
+        let authIdCheck = await authorModel.exists({ _id: data.author })
+        let publIdCheck = await publisherModel.exists({ _id: data.publisher })
+        
+        if (authIdCheck && publIdCheck) {
+
+            if (!await bookModel.exists(data)) {
+
+                let bookCreated = await bookModel.create(data)
+                res.send({ msg: bookCreated })
+            
+            } else res.send({ msg: "Book already exists" })
+        }
+        else res.send("AuthorId and publisherId both or any one of these are Invalid")
     }
+    else res.send( "Author and publisher Must be present" )
+}
+
+// 4.get all books
+module.exports.getallBooks = async function (req, res) {
+    let allBooks = await bookModel.find().populate('author').populate('publisher');
+    res.send({ msg: allBooks })
 }
 
 
 
-// 4.get all boks
-module.exports.getallNewBook = async function (req, res) {
-   // let al1lBooks = await bookModel.find()//.populate("Authorpop").populate("NewPublisherpop");
-    let allBooks = await bookModel.find();
-    console.log(allBooks)
-    res.send({msg :allBooks})
+// 5. put request
+module.exports.updateBooks = async function (req, res) {
+    /// 1 . Update ishardCover Value to true
+    let a = req.params.publisherName
+    let publisherId = await publisherModel.find({ name: a }).select({ _id: 1 })
+    let updatePublisher = await bookModel.updateMany({ publisher: publisherId }, { $set: { isHardCover: true } })
+   
+    // / 2 . Update Book Prices 
+
+    let authorId = await authorModel.find({ rating: { $gt : 3.5 } })
+    let updatedBookPrice = await bookModel.updateMany({ author : authorId }, { $inc: { price : 10 } })
+    res.send({ msg: updatedBookPrice , updatePublisher})
+    
 }
 
 
@@ -51,19 +74,3 @@ module.exports.getallNewBook = async function (req, res) {
 
 
 
-
-
-// const createAuthor= async function (req, res) {
-//     let data= req.body
-//     if(data.author_id) {
-//         let savedData= await authorModel.create(data)
-//         res.send({msg: savedData})
-// let response1 = await authorModel.find({name:'Chetan Bhaagat'})
-// let response2 = await authorModel.findOne({name:'Chetan Bhaagat'})
-//     } else {
-//         res.send({msg: 'author_id must be present'})
-//     }
-// }
-
-
-// module.exports.createAuthor= createAuthor

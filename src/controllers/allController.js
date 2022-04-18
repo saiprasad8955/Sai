@@ -1,76 +1,37 @@
-const authorModel = require("../models/newAuthor.js")
-const publisherModel = require("../models/newPublisher.js")
-const bookModel = require("../models/newBook.js")
+const batchModel = require("../models/batch.js")
+const developerModel = require("../models/developers.js")
 
-// 1.  Write a POST api that creates an author from the details in request body.
-module.exports.createAuthor = async function (req, res) {
 
-    const data = req.body;
-    const authors = await authorModel.create(data);
-    res.send({ message: authors });
+
+
+module.exports.createBatches = async function (req, res) {
+    const Data = req.body;
+    const batch = await batchModel.create(Data);
+    res.send({ data: batch })
+
 }
 
-// 2. Write a POST api that creates a publisher from the details in the request body.
-module.exports.createNewPublisher = async function (req, res) {
-    const data = req.body;
-    const publisher = await publisherModel.create(data);
-    res.send({ message: publisher });
-}
 
-// 3.  Write a POST api that creates a book from the details in the request body. The api takes both the author and publisher from the request body.
-module.exports.createNewBook = async function (req, res) {
-    const data = req.body;
-    if (data.author && data.publisher) {
-
-        let authIdCheck = await authorModel.exists({ _id: data.author })
-        let publIdCheck = await publisherModel.exists({ _id: data.publisher })
-        
-        if (authIdCheck && publIdCheck) {
-
-            if (!await bookModel.exists(data)) {
-
-                let bookCreated = await bookModel.create(data)
-                res.send({ msg: bookCreated })
-            
-            } else res.send({ msg: "Book already exists" })
-        }
-        else res.send("AuthorId and publisherId both or any one of these are Invalid")
-    }
-    else res.send( "Author and publisher Must be present" )
-}
-
-// 4.get all books
-module.exports.getallBooks = async function (req, res) {
-    let allBooks = await bookModel.find().populate('author').populate('publisher');
-    res.send({ msg: allBooks })
+module.exports.createDevelopers = async function (req, res) {
+    const Data = req.body;
+    const developers = await developerModel.create(Data);
+    res.send({ data: developers })
 }
 
 
 
-// 5. put request
-module.exports.updateBooks = async function (req, res) {
-    /// 1 . Update ishardCover Value to true
-    let a = req.params.publisherName
-    let publisherId = await publisherModel.find({ name: a }).select({ _id: 1 })
-    let updatePublisher = await bookModel.updateMany({ publisher: publisherId }, { $set: { isHardCover: true } })
-   
-    // / 2 . Update Book Prices 
-
-    let authorId = await authorModel.find({ rating: { $gt : 3.5 } })
-    let updatedBookPrice = await bookModel.updateMany({ author : authorId }, { $inc: { price : 10 } })
-    res.send({ msg: updatedBookPrice , updatePublisher})
-    
+module.exports.scholarshipdevelopers = async function (req, res) {
+    //female candidate
+    // percentage greater than or equal to 70
+    const candidates = await developerModel.find({ percentage : { $gte:  70 }  ,gender: "female"})
+    res.send({ data : candidates})
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+module.exports.developers = async function (req, res) {
+    const percentage = req.query.percentage;
+    console.log(percentage)
+    const programm = req.query.program;
+    const devpercentage = await developerModel.find({ percentage: { $gte: percentage } })
+    const devprogram = await batchModel.find({ name: programm })
+    res.send({ Data: devpercentage , devprogram })
+}

@@ -1,3 +1,4 @@
+const batch = require("../models/batch.js");
 const batchModel = require("../models/batch.js")
 const developerModel = require("../models/developers.js")
 
@@ -29,9 +30,17 @@ module.exports.scholarshipdevelopers = async function (req, res) {
 
 module.exports.developers = async function (req, res) {
     const percentage = req.query.percentage;
-    console.log(percentage)
     const programm = req.query.program;
-    const devpercentage = await developerModel.find({ percentage: { $gte: percentage } })
-    const devprogram = await batchModel.find({ name: programm })
-    res.send({ Data: devpercentage , devprogram })
+    // const devpercentage = await developerModel.find({ percentage: { $gte: percentage } })
+    //program find then 
+    const devBatch = await batchModel.find({ name: programm }).select({ _id: 1 });
+    // console.log(devBatch);
+    let arrayOfId = [];
+    for (let i = 0; i < devBatch.length; i++) {
+        let a = devBatch[i]._id
+        arrayOfId.push(a)
+    }
+    const conditionmatch = await developerModel.find({ batch: { $in: [arrayOfId] }, percentage: { $gte: percentage } }).populate("batch")
+    // console.log(idmatch);
+    res.send({ data: conditionmatch })
 }

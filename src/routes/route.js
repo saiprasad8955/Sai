@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const allController = require("../controllers/allControllers.js")
+const middle = require("../middlewares/Middleware.js")
 
 
 
-router.post("/createProduct", mid1,allController.createProduct)
 
+router.post("/createUser", middle.mid ,allController.createUser)
 
-router.post("/createUser", mid1,allController.createUser)
+router.post("/createProduct", allController.createProduct)
 
-router.post("/createOrder", mid1,allController.createOrder)
+router.post("/createOrder", middle.mid,allController.createOrder)
    
 
 

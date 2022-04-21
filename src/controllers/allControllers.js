@@ -1,6 +1,14 @@
 const req = require("express/lib/request")
 const userModel= require("../models/userModel.js")
-const productModel = require("../models/productModel.js")
+const productModel = require("../models/productModel.js");
+const orderModel = require("../models/orderModel.js");
+
+module.exports.createUser = async function (req, res) {
+    let data = req.body;
+       let Users = await userModel.create(data);
+    res.send({ msg: Users });
+}
+
 
 
 module.exports.createProduct = async function (req, res) {
@@ -9,52 +17,107 @@ module.exports.createProduct = async function (req, res) {
     res.send({ msg: Users });
 }
 
-
-
-module.exports.createUser = async function (req, res) {
-    let data = req.body;
-    // if(req.headers.isFreeAppUser){
-    //     next()
-    // }else{
-    //     res.send("FreeAppUser Header Request Must be Present")
-    // }
-    let Users = await userModel.create(data);
-    res.send({ msg: Users });
-}
-
-
-
 module.exports.createOrder = async function (req, res) {
     let data = req.body;
+    
     //isfree  header validation
-    // user validation  exists
-    let a = await userModel.find({ _id: 1 })
-    let b = await productModel.find({ _id: 1 })
+    // Done in middleware
+   
 
-    if (data.userId == a) {
-
-        if (data.productId == b) {
-
-            let order = await orderModel.create(data);
-            res.send({ msg: order });
-
-        }
-        else {
-            res.send("ProductID is Not Valid")
-        }
+    let freeUser = req.isFreeAppUser
+    //exists or not
+    if((!data.userId) && (!data.productId)){
+         return res.send({msg: "uderId and productId is required"})
     }
-    else {
-        res.send("UserId is not valid")
+    
+    
+    //validate the user and product id
+    let a = await userModel.find({ _id: data.userId  }).select({_id : 1})
+    let b = await productModel.find({ _id: data.productId }).select({_id : 1})
+
+    if (( data.userId !== a ) && ( data.productId !== b )){
+        return res.status(400).send({ error : "UserId and ProductId is Invalid"})
+    }
+
+
+    let userbalance = await userModel.findOne({_id: data.userId}).select("balance")
+    let productPrice = await productModel.findOne({_id: data.productId}).select("price")
+    
+    if(( !freeUser ) && ( userbalance.balance >= productPrice.price )){
+
+        let newBalance = userbalance.balance - productPrice.price
+
+        let createOrderData = await orderModel.create({
+            userId: req.body.userId,
+            productId: data.productId,
+            amount: productPrice.price,
+            isFreeAppUser: false
+        })
+
+        await userModel.findOneAndUpdate({ _id : data.userId }, { balance: newBalance },{ new : true })
+
+        res.send({ msg: createOrderData })
+    }
+
+    if(   ( !freeUser ) && ( userbalance.balance < productPrice.price ) ){
+        return res.send({msg: "Insufficient Balance"})
+    } 
+
+    if(freeUser == true){
+        let orderData = await orderModel.create({
+            userId: data.userId,
+            productId: data.productId,
+            amount: 0,
+            isFreeAppUser: true
+        })
+
+        res.send({msg: orderData})
     }
 
 }
 
+
+
+
+
+//     if (data.userId == a) {
+//         console.log(data.userId)
+
+//         if (data.productId == b) {
+
+//             if (req.headers.isfreeappuser == true) {
+
+//                 await orderModel.updateOne(
+//                     { userId: a },
+//                     { $set: { price: 0, isFreeAppUser: true } },
+//                     { new: true });
+
+//                 await userModel.findOneAndUpdate(
+//                     { _id: data.userId },
+//                     { $set: { isFreeAppUser: true } },
+//                     { new: true }
+//                 )
+
+//             } else {
+//                 //nothing to do  
+//                 res.send("")
+//             }
+//             // let order = await orderModel.create(data);
+//             // res.send({ msg: order });
+
+//         }
+//         else {
+//             res.send("ProductID is Not Valid")
+//         }
+//     }
+//     else {
+//         res.send("UserId is not valid")
+//     }
+
+// }
+
 // If the isFreeAppUser header is true then the balance of the user is not deducted and the amount in order is set to 0 as well the attribute in order isFreeAppUser is set to true.
-    if(isfreeheader==true){
-//balance deduct 
-    }else{
-//set balance to zero
-    }
+    
    
 
    // If this header has a false value then the product’s price is checked. This value is deducted from the user’s balance and the order amount is set to the product’s price as well as the attrbiute isFreeAppUser is set to false in order document.

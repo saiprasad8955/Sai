@@ -1,11 +1,20 @@
 const mongoose = require('mongoose');
-
+const ObjectId = mongoose.Schema.Types.ObjectId
 const userSchema = new mongoose.Schema({
-    userId: mongoose.Schema.Types.ObjectId,
-    productId: mongoose.Schema.Types.ObjectId,
+    userId: {
+        type: ObjectId,
+        ref: "UserOne"
+    },
+    productId: {
+        type: ObjectId,
+        ref: "Product"
+    },
     amount: Number,
-    isFreeAppUser: true,
-    date: Date
+    isFreeAppUser: Boolean,
+    date:{
+        type: Date,
+        default: new Date().toUTCString()
+            }
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema) //users
+module.exports = mongoose.model('User', userSchema) 

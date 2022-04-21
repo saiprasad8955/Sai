@@ -10,11 +10,12 @@ const tokenAuth = function(req,res,next){
     if (!token) token = req.headers["x-auth-token"];
     if (!token) return res.send({ status: false, msg: "token must be present" });
 
-    let decodedToken = jwt.verify(token, "functionup-thorium");
-
-    if (!decodedToken)
-    return res.send({ status: false, msg: "token is invalid" });
-
+    try {
+        let decodedToken = jwt.verify(token, "functionup-thorium");
+      } 
+    catch(err) {
+        return res.send({ status: false, msg: "token is invalid" });
+      }
     next()
     console.log(token);
 }

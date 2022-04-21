@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId
-const userSchema = new mongoose.Schema({
-    userId: {
+
+const orderSchema = new mongoose.Schema( {
+    // Write the schema content
+    userId:  {
         type: ObjectId,
-        ref: "UserOne"
+        ref: "User"
+
     },
-    productId: {
+	productId: {
         type: ObjectId,
-        ref: "Product"
+        ref: "Product" 
     },
-    amount: Number,
-    isFreeAppUser: Boolean,
-    date:{
-        type: Date,
-        default: new Date().toUTCString()
-            }
+	amount: Number,
+	isFreeAppUser: Boolean, 
+	date: String
+
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema) 
+module.exports = mongoose.model('Order', orderSchema) //orders

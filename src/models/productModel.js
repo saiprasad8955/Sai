@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema( {
-    name:String,
-	category:String,
-    //mandatory property
-	price:{
+const productSchema = new mongoose.Schema( {
+    // Write the schema content
+    name: String,
+	category: String,
+	price: {
         type: Number,
         required: true
-    }
-
+    } //70 mandatory property
+   
 }, { timestamps: true });
 
-module.exports = mongoose.model('Product', userSchema) //users
+module.exports = mongoose.model('Product', productSchema) //products

@@ -1,7 +1,8 @@
 const check_isFreeAppUser = function ( req, res, next) {
+
     let isFreeAppUser = req.headers.isfreeappuser
     if(!isFreeAppUser){
-        return res.send( {message: 'The request is missing a mandatory header'} )
+        return res.send( {status :false, message: 'The request is missing a mandatory header'} )
     }
    
      req.isFreeAppUser = req.headers.isfreeappuser

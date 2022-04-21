@@ -19,6 +19,7 @@ const createOrder = async function (req, res) {
 
     //------- Validate the productId
     let product = await productModel.findById(productId)
+    // console.log(typeof(productId))
 
     if (!product) {
         return res.send({ message: "Not a valid product id" })
@@ -32,6 +33,9 @@ const createOrder = async function (req, res) {
     if (req.headers.isfreeappuser == 'true') {
         order.isFreeAppUser = true
         order.amount = 0
+        let savedData = await orderModel.create(order)
+           return  res.send({ msg: savedData })
+
     }
     else {
 

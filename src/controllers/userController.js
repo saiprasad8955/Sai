@@ -39,7 +39,6 @@ const loginUser = async function (req, res) {
 //----------------GET USER
 const getUserData = async function (req, res) {
   // token present check via middleware
-
   //----------------verify the token via middleware
 
   //user validation
@@ -88,8 +87,50 @@ const deleteUser = async function (req, res) {
   res.send({ status: true, data: user });
 };
 
+const messagePost = async function (req, res) {
+  let message = req.body.message;
+
+  //----------check token and valid
+  let token = req.headers["x-Auth-token"];
+  if (!token) token = req.headers["x-auth-token"];
+  if (!token) {
+    return res.send({ status: false, msg: "token must be present" });
+  }
+
+  //----------Authorise the person who is logged in and modifying self data if not then throw a error.
+  let decodedToken = jwt.verify(token, "functionup-thorium");
+  let userToBModified = req.params.userId;
+  let userLoggedIn = decodedToken.userId;
+
+  if (userToBModified !== userLoggedIn) {
+    return res.send({
+      status: false,
+      msg: "User Logged in is Not Allowed to Make Changes",
+    });
+  }
+
+  //-----------user validation
+  let userId = req.params.userId;
+  let user = await userModel.findById(userId);
+  if (!user) {
+    return res.status(400).send({ status: false, msg: "No such user Found" });
+  }
+
+  let updatedposts = user.post;
+  updatedposts.push(message);
+
+  let updatedDocument = await userModel.findOneAndUpdate(
+    { _id: user._id },
+    { post: updatedposts },
+    { new: true }
+  );
+
+  res.status(201).send({ status: true, msg: updatedDocument });
+};
+
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
 module.exports.loginUser = loginUser;
 module.exports.deleteUser = deleteUser;
+module.exports.messagePost = messagePost;

@@ -16,6 +16,7 @@ const tokenAuth = function(req,res,next){
     catch(err) {
         return res.send({ status: false, msg: "token is invalid" });
       }
+    
     next()
     console.log(token);
 }
@@ -32,6 +33,8 @@ router.get("/fetch/:userId",tokenAuth, userController.getUserData)
 router.put("/update/:userId",tokenAuth, userController.updateUser)
 
 router.put("/delete/:userId",tokenAuth, userController.deleteUser)
+
+router.post("/users/:userId/posts",tokenAuth, userController.messagePost)
 
 
 module.exports = router;

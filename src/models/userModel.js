@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema( {
         default : false
     },
     age: Number,
+    post:{
+        type:[String],
+        default:[]
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema)

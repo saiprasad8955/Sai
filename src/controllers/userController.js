@@ -1,21 +1,15 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
-
-
 //----------------CREATE USER
 const createUser = async function (req, res) {
- 
   let data = req.body;
   let savedData = await userModel.create(data);
   res.send({ msg: savedData });
 };
 
-
 //----------------CREATE LOGIN REQUEST
 const loginUser = async function (req, res) {
-
-
   let userName = req.body.emailId;
   let password = req.body.password;
 
@@ -42,15 +36,13 @@ const loginUser = async function (req, res) {
   res.send({ status: true, data: token });
 };
 
-//----------------GET USER 
+//----------------GET USER
 const getUserData = async function (req, res) {
-
   // token present check via middleware
-  
-  //----------------verify the token via middleware
-  
 
-    //user validation
+  //----------------verify the token via middleware
+
+  //user validation
   let userId = req.params.userId;
   let userDetails = await userModel.findById(userId);
   if (!userDetails)
@@ -62,7 +54,7 @@ const getUserData = async function (req, res) {
 //----------------Update Request
 const updateUser = async function (req, res) {
   // check token via midddleware
-  // verify token 
+  // verify token
   // validate user
   let userId = req.params.userId;
   let user = await userModel.findById(userId);
@@ -70,29 +62,32 @@ const updateUser = async function (req, res) {
   //return error if user not present
   if (!user) {
     return res.send("No such user exists");
-      }
+  }
 
   let userData = req.body;
-  
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData,{new :true});
+
+  let updatedUser = await userModel.findOneAndUpdate(
+    { _id: userId },
+    userData,
+    { new: true }
+  );
   res.send({ status: true, data: updatedUser });
 };
 
 //----------------Delete Request
-const deleteUser = async function(req,res){
+const deleteUser = async function (req, res) {
+  // check token via middleware
 
-// check token via middleware
-
-// update attribute
+  // update attribute
   let userId = req.params.userId;
-  let user = await userModel.findById(userId)
+  let user = await userModel.findById(userId);
   user.isDeleted = true;
   await user.save();
 
   // let updatedUser = await userModel.findOneAndUpdate({ _id : userId }, { isDeleted : true },{ new : true });
   res.send({ status: true, data: user });
+};
 
-}
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;

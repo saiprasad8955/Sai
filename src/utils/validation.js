@@ -32,7 +32,9 @@ const isValidPassword = function(password) {
     return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(password)
 }
 
-
+const isValidObjectId = function (objectId) {
+    return mongoose.Types.ObjectId.isValid(objectId);
+  };
 
 
 
@@ -43,7 +45,8 @@ module.exports = {
     isValidPhone,
     isValidPhoneNumber,
     isValidEmail,
-    isValidPassword
+    isValidPassword,
+    isValidObjectId
   };
 
 

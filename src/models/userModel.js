@@ -27,9 +27,15 @@ email:{
     unique:true,
     trim:true
 },
-
-
-
+password: {
+    type:String,
+    required:true,
+},
+  address: {
+    street: {type:String},
+    city: {type:String},
+    pincode: {type:String}
+  }
 },{timestamps:true});
 
 module.exports =mongoose.model("User",userSchema)

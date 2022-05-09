@@ -6,7 +6,6 @@ const chalk = require("chalk");
 const mongoose = require("mongoose")
 
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 

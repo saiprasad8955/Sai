@@ -64,3 +64,5 @@ const userLogin = async function (req, res) {
     //////////////////////////Sending created token to client///////////////////
     return res.status(200).send({ status: true, message: 'Success', data: token })
 }
+
+module.exports.userLogin=userLogin

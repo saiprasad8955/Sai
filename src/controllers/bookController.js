@@ -111,21 +111,7 @@ const createBook = async (req, res) => {
             return res.status(400).send({ status: false, message: "Released Date Format Should be in 'YYYY-MM-DD' Format " });
         }
 
-        // Valid street when street is coming
-        if(address.street && !validator.isValid2(address.street)){
-            return res.status(400).send({status: false , message: 'Enter a valid Street'})
-        }
-
-        // Valid city when city is coming
-        if(address.city && !validator.isValid2(address.city)){
-           return res.status(400).send({status: false , message: 'Enter a valid city name'})
-        }
-
-        // Valid pincode when pincode is coming
-        if(address.pincode && !validator.isValidPincode(address.pincode)){
-            return res.status(400).send({status: false , message: 'Enter a valid city pincode'})
-        }
-
+        
         // Valid reviews when reviews are coming
         if (reviews && (typeof reviews !== 'number')) {
             return res.status(400).send({ status: false, message: "Reviews Must be numbers" })

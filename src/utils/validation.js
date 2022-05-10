@@ -9,8 +9,15 @@ const isValid = function (value) {
     return true;
 }
 
-const isValidRequestBody = function (reqBody) {
-    return Object.keys(reqBody).length > 0;
+const isValid2 = function (value) {
+    const dv = /[a-zA-Z]/;
+    if (typeof value !== 'string') return false;
+    if (dv.test(value) === false) return false;
+    return true;
+}
+
+const isValidRequestBody = function (requestBody) {
+    return Object.keys(requestBody).length > 0;
 }
 
 const isValidTitle = function (title) {
@@ -38,7 +45,16 @@ const isValidObjectId = function (objectId) {
     return mongoose.Types.ObjectId.isValid(objectId);
   };
 
+  const check = (value)=>{
+    return value.every(ele => typeof(ele) === "string")
+}
 
+const isValidPincode = function(value) {
+    const dv = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/; 
+    if(typeof value !== 'string') return false
+    if(dv.test(value)=== false) return false
+    return true
+ }
 
 module.exports = {
     isValid,
@@ -48,7 +64,10 @@ module.exports = {
     isValidPhoneNumber,
     isValidEmail,
     isValidPassword,
-    isValidObjectId
+    isValidObjectId,
+    isValid2,
+    check,
+    isValidPincode
   };
 
 

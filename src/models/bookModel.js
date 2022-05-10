@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const userModel=require('./userModel')
-const ObjectId=mongoose.SchemaType.ObjectId
+const userModel=require('../models/userModel')
+const ObjectId = mongoose.SchemaType.ObjectId
 
 
 const bookSchema=new mongoose.Schema({ 

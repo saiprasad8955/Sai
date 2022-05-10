@@ -7,7 +7,7 @@ const reviewSchema = new mongoose.Schema({
     bookId: {
         type:ObjectId,
         required:true,
-        ref:"books",
+        ref:"Book",
     },
     reviewedBy: {
         type:String,

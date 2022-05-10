@@ -1,3 +1,4 @@
+
 const userModel = require("../models/userModel")
 const jwt = require('jsonwebtoken');
 const { isValidObjectId } = require("mongoose");
@@ -57,8 +58,8 @@ const createUser= async function (req, res) {
 
 
   //*User creation
-      let userCreated = await userModel.create(reqBody)
-      res.status(201).send({status:true ,data: userCreated})
+      const userCreated = await userModel.create(reqBody)
+      res.status(201).send({status:true ,ms:"User Created Successfully",data: userCreated})
   
   } catch (err) {
   res.status(500).send({ msg: "server error", error: err.message });

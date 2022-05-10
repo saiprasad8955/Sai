@@ -1,3 +1,5 @@
+
+
 const mongoose = require("mongoose");
 
 
@@ -7,8 +9,8 @@ const isValid = function (value) {
     return true;
 }
 
-const isValidRequestBody = function (requestBody) {
-    return Object.keys(requestBody).length > 0;
+const isValidRequestBody = function (reqBody) {
+    return Object.keys(reqBody).length > 0;
 }
 
 const isValidTitle = function (title) {

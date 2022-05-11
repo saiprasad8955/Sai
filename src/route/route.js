@@ -11,12 +11,16 @@ router.post("/register",userController.createUser)
 
 router.post("/login",userController.userLogin)
 
-////////////////////////getbooks///////////
+////////////////////////getbooks by id///////////
 
-router.get("/books/:bookId",)
+router.get("/books/:bookId",bookController.getBookById)
 
+////////////////////.//////update book/////////////////////
 
+router.put("/books/:bookId",bookController.updateBook)
 
+//////////////////////////////Delete book//////////////////////
 
+router.delete("/books/:bookId",bookController.deleteBook)
 
 module.exports =  router ;

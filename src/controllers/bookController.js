@@ -4,6 +4,10 @@ const userModel = require('../models/userModel')
 const validator = require("../utils/validation")
 let date=new Date()
 
+const isValidObjectId = (ObjectId) => {
+  return mongoose.Types.ObjectId.isValid(ObjectId);
+};
+
 //-------------------------------------------create Book
 const createBook = async (req, res) => {
 
@@ -124,16 +128,17 @@ const createBook = async (req, res) => {
 
         // After All Successful Validation then Create Book
         const bookDetails = await bookModel.create(reqBody)
-        return res.status(201).send({ status: true, message: 'successfully created ', data: { bookDetails } })
-    } catch (err) {
+        
         return res.status(500).send({ status: false, message: err.message })
-    }
+    
+    } catch (err) {
+        return res.status(201).send({ status: true, message: 'successfully created ', data: { bookDetails } })
 };
+}
 
 
 
-
-// Get Api For Books
+///////////////////// Get Api For Books////////////////////////////////////////
 
 const getAllBooks = async (req, res) => {
 
@@ -195,8 +200,13 @@ const getAllBooks = async (req, res) => {
 const getBookById = async function (req, res) {
     try {
         const bookId = req.params.bookId;
+        if(!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, msg: "Enter a valid book Id" })
+      
+        if(!bookId){
+            return res.status(400).send({status:false,message:"BookId is required"})
+        }
 
-        let findBook = await bookModel.findById({ _id: bookId,isDeleted:false})
+        let findBook = await bookModel.findById(bookId,{isDeleted:false})
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
         }
@@ -220,22 +230,34 @@ const getBookById = async function (req, res) {
 const updateBook=async function(req,res){
     try{
         const bookId = req.params.bookId;
+        if(!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "Enter a valid book Id" })
+            
     const {title,excerpt,releasedAt,ISBN}=req.body;
+    
+    if (Object.keys(req.body).length == 0) {
+        return res.status(400).send({
+          status: false,
+          msg: "Invalid request parameters. Please provide blog details",
+        });
+      }
 
+    const chkB=await bookModel.findById({_id:bookId})
     const chktitle=await bookModel.findOne({title:title,isDeleted:false})
     if (chktitle) {
-        return res.status(400).send({ status: false, message: `${title} title should be unique please try with another option` })
+        return res.status(400).send({ status: false, message: `"${title}" title should be unique please try with another option` })
     }
 
     const chkISBN=await bookModel.findOne({ISBN:ISBN,isDeleted:false})
     if (chkISBN) {
-        return res.status(400).send({ status: false, message: `${ISBN} ISBN should be unique please try with another option` })
+        return res.status(400).send({ status: false, message: `"${ISBN}" ISBN should be unique please try with another option` })
     }
 
     const chkBook=await bookModel.findByIdAndUpdate(
-        {_id:blogId},
-        {$set:{title:title,excerpt:excerpt,ISBN:ISBN},releasedAt:date }
+        {_id:bookId},
+        {$set:{title:title,excerpt:excerpt,ISBN:ISBN},releasedAt:date },
+        {new:true}
         )
+        
   return res.status(201).send({status:true, message:"Updated",data:chkBook})
 
 }
@@ -254,14 +276,18 @@ const deleteBook=async function(req,res){
     try{
         const bookId = req.params.bookId;
         
+        if(!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, msg: "Enter a valid book Id" })
+      
+        
         const chkBook=await bookModel.findByIdAndUpdate(
-            {_id:blogId,isDeleted:false},
-            {$set:{isDeleted:false},deletedAt:date }
+            {_id:bookId,isDeleted:false},
+            {$set:{isDeleted:true},deletedAt:date }
             )
         if(!chkBook){
             return res.status(404).send({status:false,message:"Book not found or already deleted please try with another bookID"})
         }
-        return res.status(200).send({status:true,message})
+
+        return res.status(200).send({status:true,message:"deleted"})
     }
     catch(err){
         return res.status(500).send({ status: false, message: "server error", error: err.message });

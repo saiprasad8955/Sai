@@ -12,6 +12,10 @@ router.post("/login",userController.userLogin)
 
 router.post("/books/:bookId/review",reviewController.addReview)
 
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+ 
+router.delete("/books/:bookId/review/:reviewId",reviewController.deleteReview)
+
 ///////////register user///////////////
 
 router.post("/register",userController.createUser)

@@ -55,6 +55,10 @@ const isValidPincode = function(value) {
     if(dv.test(value)=== false) return false
     return true
  }
+const isValidRating = function(rating) {
+    if(rating >= 1 && rating<=5) return true;
+    return false
+}
 
 module.exports = {
     isValid,
@@ -67,7 +71,8 @@ module.exports = {
     isValidObjectId,
     isValid2,
     check,
-    isValidPincode
+    isValidPincode,
+    isValidRating
   };
 
 

@@ -75,14 +75,25 @@ const createUser= async function (req, res) {
           return res.status(400).send({ status: false, msg: "Password is required" })
         }
 
-      if (!isValidPassword(password)) {
-          return res.status(400).send({ status: false, msg: "Password should be 8-15 character long and must contain atleast one Digit, one Special symbol ,one Uppercase and lowercase character."})
-        }
+      // Valid street when street is coming
+      if(address.street && !validator.isValid2(address.street)){
+        return res.status(400).send({status: false , message: 'Enter a valid Street'})
+    }
+
+    // Valid city when city is coming
+    if(address.city && !validator.isValid2(address.city)){
+       return res.status(400).send({status: false , message: 'Enter a valid city name'})
+    }
+
+    // Valid pincode when pincode is coming
+    if(address.pincode && !validator.isValidPincode(address.pincode)){
+        return res.status(400).send({status: false , message: 'Enter a valid city pincode'})
+    }
+
 
   //*User creation
-
-      const userCreated = await userModel.create(reqBody)
-      res.status(201).send({status:true ,ms:"User Created Successfully",data: userCreated})
+      let userCreated = await userModel.create(reqBody)
+      res.status(201).send({status:true ,data: {userCreated}})
   
   } catch (err) {
   res.status(500).send({ msg: "server error", error: err.message });

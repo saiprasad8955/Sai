@@ -5,36 +5,29 @@ const bookController=require('../controllers/bookController')
 const reviewController = require('../controllers/reviewController')
 const mw = require('../middleware/middleware')
 
-
-
+///////////////////user/////////////////////////
 router.post("/register",userController.createUser)
 
 router.post("/login",userController.userLogin)
 
+////////////books///////////////////////////////
+
+router.post("/books",mw.authentication,mw.authorization,bookController.createBook)
+
+router.get("/books",mw.authentication,bookController.getAllBooks)
+
+router.get("/books/:bookId",mw.authentication,bookController.getBookById)
+
+router.put("/books/:bookId",mw.authentication,mw.authorization,bookController.updateBook)
+
+router.delete("/books/:bookId",mw.authentication,mw.authorization,bookController.deleteBook)
+
+/////////////////////////review /////////////////
 router.post("/books/:bookId/review", mw.authentication, reviewController.addReview)
 
 router.put("/books/:bookId/review/:reviewId", mw.authentication, reviewController.updateReview)
  
 router.delete("/books/:bookId/review/:reviewId", mw.authentication, reviewController.deleteReview)
 
-///////////register user///////////////
-
-router.post("/register",userController.createUser)
-
-///////////////////////Login API///////
-
-router.post("/login",userController.userLogin)
-
-////////////////////////getbooks by id///////////
-
-router.get("/books/:bookId",bookController.getBookById)
-
-////////////////////.//////update book/////////////////////
-
-router.put("/books/:bookId",bookController.updateBook)
-
-//////////////////////////////Delete book//////////////////////
-
-router.delete("/books/:bookId",bookController.deleteBook)
 
 module.exports =  router ;

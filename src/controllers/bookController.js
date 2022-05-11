@@ -30,11 +30,6 @@ const createBook = async (req, res) => {
             return res.status(400).send({ status: false, message: 'Title is Required' });
         }
 
-        // Check title is valid or not
-        if (! validator.isValidTitle(title)) {
-            return res.status(400).send({ status: false, message: 'Please Enter Valid title' });
-        }
-
         // Check duplicate title
         const duplicateTitle = await bookModel.findOne({ title: title })
         if (duplicateTitle) {
@@ -101,9 +96,9 @@ const createBook = async (req, res) => {
         }
 
         // Check subcategory is valid or not
-        if (! validator.check(subcategory)) {
-            return res.status(400).send({ status: false, message: 'Enter Valid Subcategory' });
-        }
+        // if (! validator.check(subcategory)) {
+        //     return res.status(400).send({ status: false, message: 'Enter Valid Subcategory' });
+        // }
 
         // Check releasedAt is coming or not
         if (! validator.isValid(releasedAt)) {
@@ -129,11 +124,11 @@ const createBook = async (req, res) => {
 
         // After All Successful Validation then Create Book
         const bookDetails = await bookModel.create(reqBody)
-        
-        return res.status(500).send({ status: false, message: err.message })
-    
+        return res.status(500).send({ status: true, message: 'successfully created ', data: { bookDetails } })
+            
     } catch (err) {
-        return res.status(201).send({ status: true, message: 'successfully created ', data: { bookDetails } })
+        console.log(err)
+        return res.status(500).send({ status: false, message: err.message })  
 };
 }
 
@@ -202,13 +197,8 @@ const getBookById = async function (req, res) {
     try {
         const bookId = req.params.bookId;
         
-        if(req.body.hasOwnProperty('authorId')) {
-        if(!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, msg: "Enter a valid book Id" })
-        }
-        else{
-            return res.status(400).send({status:false,message:"bookId is required"})
-        }
-        
+        if(!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, msg: "Enter a valid bookId" })
+
         let findBook = await bookModel.findOne({_id:bookId,isDeleted:false})
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
@@ -234,11 +224,8 @@ const getBookById = async function (req, res) {
 const updateBook=async function(req,res){
     try{
         const bookId = req.params.bookId;
-        if(!bookId){
-            return res.status(400).send({status:false,message:"bookId is required"})
-        }
-        if(!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "Enter a valid bookId" })
-            
+       
+        
     const {title,excerpt,releasedAt,ISBN}=req.body;
     
     if (Object.keys(req.body).length == 0) {
@@ -262,7 +249,10 @@ const updateBook=async function(req,res){
     }
 
     
-    const chktitle=await bookModel.findOne({title:title,isDeleted:false})
+    const chktitle=await bookModel.findOne({title:title})
+    // if(chktitle.isDeleted==true){
+    //     return res.status(400).send({status:false,message:"123456780087654"})
+    // }
     if (chktitle) {
         return res.status(400).send({ status: false, message: `"${title}" title should be unique please try with another option` })
     }

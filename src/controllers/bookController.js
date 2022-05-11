@@ -2,6 +2,7 @@ const bookModel = require('../models/bookModel')
 const mongoose=require('mongoose')
 const userModel = require('../models/userModel')
 const validator = require("../utils/validation")
+const reviewModel=require("../models/reviewModel")
 let date=new Date()
 
 const isValidObjectId = (ObjectId) => {
@@ -210,6 +211,7 @@ const getBookById = async function (req, res) {
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
         }
+        
         let review = await reviewModel.find({ bookId: bookId })
         data1 = {
             findBook,

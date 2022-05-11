@@ -1,3 +1,4 @@
+
 const userModel = require("../models/userModel")
 const jwt = require('jsonwebtoken');
 const { isValidObjectId } = require("mongoose");
@@ -13,38 +14,56 @@ const {
   } = require("../utils/validation")
 
 
-//*User - Registration
+  //User - Registration
 const createUser= async function (req, res) {
     
     try {
+
       const reqBody = req.body
 
-  //*Empty body validation
-      if(!isValidRequestBody(reqBody))
+      //Empty body validation
+      if (!isValidRequestBody(reqBody)) {
       return res.status(400).send({status: false,msg: "Invalid request, Please provide details"});
+      }
 
   
-  //*Extracts params from body
+      //Extracts params from body
       const { title, name, phone, email, password, address } = req.body
 
-  //*Params Validation
+      //Params Validation
   
-      if (!isValid(title)) return res.status(400).send({ status: false, msg: "Title is required" })
-      if (!isValidTitle(title)) return res.status(400).send({ status: false, msg: "Title should be among Mr, Mrs, Miss" })
-      
-      if (!isValid(name)) return res.status(400).send({ status: false, msg: "Name is required" })
+      if (!isValid(title)) {
+          return res.status(400).send({ status: false, msg: "Title is required" })
+      }
 
-      if (!isValid(phone)) return res.status(400).send({ status: false, msg: "Phone Number is required" })
-      if (!isValidPhone(phone)) return res.status(400).send({ status: false, msg: "Please enter valid Phone Number" })
-      if (!isValidPhoneNumber(phone)) return res.status(400).send({ status: false, msg: "Please enter numeric characters only" })
-      //if (!isValidPhone(phone) && !isValidPhoneNumber(phone)) return res.status(400).send({ status: false, msg: "Please enter valid Phone Number" })
+      if (!isValidTitle(title)) {
+          return res.status(400).send({ status: false, msg: "Title should be among Mr, Mrs, Miss" })
+      }
       
+      if (!isValid(name)) {
+          return res.status(400).send({ status: false, msg: "Name is required" })
+      }
+
+      if (!isValid(phone)) {
+          return res.status(400).send({ status: false, msg: "Phone Number is required" })
+      }
+
+      if (!isValidPhone(phone)) {
+          return res.status(400).send({ status: false, msg: "Please enter valid Phone Number" })
+      }
+
+      if (!isValidPhoneNumber(phone)) {
+          return res.status(400).send({ status: false, msg: "Please enter numeric characters only" })
+      }
+
       const isPhoneAlreadyUsed = await userModel.findOne({ phone: phone });
         if (isPhoneAlreadyUsed) {
             return res.status(400).send({ status: false, message: `${phone} Phone number is already registered` })
         }
 
-        if (!isValid(email)) return res.status(400).send({ status: false, msg: "Email is required" })
+        if (!isValid(email)) {
+            return res.status(400).send({ status: false, msg: "Email is required" })
+        }
         if (!isValidEmail(email)) return res.status(400).send({ status: false, msg: "Please enter Valid Email" })
 
       const isEmailAlreadyUsed = await userModel.findOne({ email: email }); 
@@ -52,8 +71,9 @@ const createUser= async function (req, res) {
             return res.status(400).send({ status: false, message: `${email} Email address is already registered` })
         }
 
-      if (!isValid(password)) return res.status(400).send({ status: false, msg: "Password is required" })
-      if (!isValidPassword(password)) return res.status(400).send({ status: false, msg: "Password should be 8-15 character long and must contain atleast one Digit, one Special symbol ,one Uppercase and lowercase character."})
+      if (!isValid(password)) {
+          return res.status(400).send({ status: false, msg: "Password is required" })
+        }
 
       // Valid street when street is coming
       if(address.street && !validator.isValid2(address.street)){

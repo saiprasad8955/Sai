@@ -1,7 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const userController=require('../controllers/userController')
+const userController = require('../controllers/userController')
 const bookController=require('../controllers/bookController')
+const reviewController = require('../controllers/reviewController')
+
+
+
+router.post("/register",userController.createUser)
+
+router.post("/login",userController.userLogin)
+
+router.post("/books/:bookId/review",reviewController.addReview)
+
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+ 
+router.delete("/books/:bookId/review/:reviewId",reviewController.deleteReview)
 
 ///////////register user///////////////
 

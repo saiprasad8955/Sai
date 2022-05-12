@@ -1,13 +1,18 @@
-const bookModel = require('../models/bookModel')
+
 const mongoose=require('mongoose')
+
+const bookModel = require('../models/bookModel')
 const userModel = require('../models/userModel')
-const validator = require("../utils/validation")
 const reviewModel=require("../models/reviewModel")
 let date=new Date()
 
-const isValidObjectId = (ObjectId) => {
-  return mongoose.Types.ObjectId.isValid(ObjectId);
-};
+const {
+    isValid,
+    isValid2,
+    isValidRequestBody,
+    isValidObjectId
+  } = require("../utils/validation")
+
 
 //-------------------------------------------create Book
 const createBook = async (req, res) => {
@@ -21,15 +26,15 @@ const createBook = async (req, res) => {
         } = reqBody;
 
         // Check data is coming or not
-        if (! validator.isValidRequestBody(reqBody)) {
+        if (!isValidRequestBody(reqBody)) {
             return res.status(400).send({ status: false, message: "Please Enter the All Book Details" })
         }
 
         // Check title is coming or not
-        if (! validator.isValid(title)) {
+        if (!isValid(title)) {
             return res.status(400).send({ status: false, message: 'Title is Required' });
         }
-
+        
         // Check duplicate title
         const duplicateTitle = await bookModel.findOne({ title: title })
         if (duplicateTitle) {
@@ -37,33 +42,33 @@ const createBook = async (req, res) => {
         }
 
         // Check excerpt is coming or not 
-        if (! validator.isValid(excerpt)) {
-            return res.status(400).send({ status: false, message: 'Please Enter the Excerpt' });
+        if (!isValid(excerpt)) {
+            return res.status(400).send({ status: false, message: 'Excerpt is Required' });
         }
 
         // Check excerpt is valid or not
-        if (! validator.isValid2(excerpt)) {
+        if (!isValid2(excerpt)) {
             return res.status(400).send({ status: false, message: 'Please enter valid excerpt' });
         }
 
         // Check userId is coming or not
-        if (! validator.isValid(userId)) {
+        if (!isValid(userId)) {
             return res.status(400).send({ status: false, message: 'userId is Required' });
         }
 
         // Check userId is valid or not
-        if (! validator.isValidObjectId(userId)) {
+        if (!isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: 'Please enter valid user ID' });
         }
 
         // Check Duplicate UserId
         const duplicateUserId = await userModel.findOne({ userId: userId });
-        if (! duplicateUserId) {
+        if (!duplicateUserId) {
             return res.status(400).send({ status: true, message: "User ID is Not exists in our Database" })
         }
 
         // Check ISBN is coming or not
-        if (! validator.isValid(ISBN)) {
+        if (! isValid(ISBN)) {
             return res.status(400).send({ status: false, message: 'ISBN is Required' });
         }
 
@@ -80,34 +85,34 @@ const createBook = async (req, res) => {
         }
         
         // Check category is coming or not
-        if (! validator.isValid(category)) {
+        if (!isValid(category)) {
             return res.status(400).send({ status: false, message: 'category is Required' });
         }
 
 
         // Check category is valid or not
-        if ( !validator.isValid2(category)) {
+        if (!isValid2(category)) {
             return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
         }
 
         // Check subcategory is coming or not
-        if (! validator.isValid(subcategory)) {
+        if (!isValid(subcategory)) {
             return res.status(400).send({ status: false, message: 'subcategory is Required' });
         }
 
         // Check subcategory is valid or not
-        // if (! validator.check(subcategory)) {
+        // if (! check(subcategory)) {
         //     return res.status(400).send({ status: false, message: 'Enter Valid Subcategory' });
         // }
 
         // Check releasedAt is coming or not
-        if (! validator.isValid(releasedAt)) {
+        if (!isValid(releasedAt)) {
             return res.status(400).send({ status: false, message: 'Please Enter Released Date' });
         }
 
         // Check releasedAt Value should be in given format
         let reAt = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;// YYYY-MM-DD
-        if (! reAt.test(releasedAt)) {
+        if (!reAt.test(releasedAt)) {
             return res.status(400).send({ status: false, message: "Released Date Format Should be in 'YYYY-MM-DD' Format " });
         }
 
@@ -156,17 +161,17 @@ const getAllBooks = async (req, res) => {
         }
 
         // If user ID is coming then valid it
-        if ( userId && ! validator.isValidObjectId(userId)) {
+        if ( userId && ! isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: 'Please enter Valid User ID' });
         }
 
         // If category is coming then valid it
-        if ( category && ! validator.isValid2(category)) {
+        if ( category && ! isValid2(category)) {
             return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
         }
 
         // If subcategory is coming then valid it
-        if ( subcategory && ! validator.check(subcategory)) {
+        if ( subcategory && ! check(subcategory)) {
             return res.status(400).send({ status: false, message: 'Subcategory is Required' });
         }
 
@@ -236,15 +241,15 @@ const updateBook=async function(req,res){
       }
 
       //////////validations///////////////////
-    if (! validator.isValid(title)) {
+    if (!isValid(title)) {
         return res.status(400).send({ status: false, message: 'title is Required' });
     }
-        if (! validator.isValid(ISBN)) {
+        if (!isValid(ISBN)) {
         return res.status(400).send({ status: false, message: 'ISBN is Required' });
     }
-    if (! validator.isValid(excerpt)) {
+    if (!isValid(excerpt)) {
         return res.status(400).send({ status: false, message: 'excerpt is Required' });
-    }if (! validator.isValid(releasedAt)) {
+    }if (!isValid(releasedAt)) {
         return res.status(400).send({ status: false, message: 'releasedAt is Required' });
     }
 

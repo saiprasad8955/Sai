@@ -1,15 +1,15 @@
 
 const userModel = require("../models/userModel")
 const jwt = require('jsonwebtoken');
-const { isValidObjectId } = require("mongoose");
 
 const {
     isValid,
+    isValid2,
     isValidTitle,
     isValidRequestBody,
     isValidPhone,
-    isValidPhoneNumber,
     isValidEmail,
+    isValidPincode,
     isValidPassword
   } = require("../utils/validation")
 
@@ -44,16 +44,17 @@ const createUser= async function (req, res) {
           return res.status(400).send({ status: false, msg: "Name is required" })
       }
 
+      if (!isValid2(name)) {
+        return res.status(400).send({ status: false, msg: "Please Enter valid Name" })
+    }
+
+
       if (!isValid(phone)) {
           return res.status(400).send({ status: false, msg: "Phone Number is required" })
       }
 
       if (!isValidPhone(phone)) {
           return res.status(400).send({ status: false, msg: "Please enter valid Phone Number" })
-      }
-
-      if (!isValidPhoneNumber(phone)) {
-          return res.status(400).send({ status: false, msg: "Please enter numeric characters only" })
       }
 
       const isPhoneAlreadyUsed = await userModel.findOne({ phone: phone });
@@ -75,25 +76,28 @@ const createUser= async function (req, res) {
           return res.status(400).send({ status: false, msg: "Password is required" })
         }
 
+        if (!isValidPassword(password)) {
+            return res.status(400).send({ status: false, msg: "Please Enter valid Password" })
+          }
+
       // Valid street when street is coming
-      if(address.street && !validator.isValid2(address.street)){
+      if(address.street && !isValid2(address.street)){
         return res.status(400).send({status: false , message: 'Enter a valid Street'})
     }
 
     // Valid city when city is coming
-    if(address.city && !validator.isValid2(address.city)){
+    if(address.city && !isValid2(address.city)){
        return res.status(400).send({status: false , message: 'Enter a valid city name'})
     }
 
     // Valid pincode when pincode is coming
-    if(address.pincode && !validator.isValidPincode(address.pincode)){
+    if(address.pincode && !isValidPincode(address.pincode)){
         return res.status(400).send({status: false , message: 'Enter a valid city pincode'})
     }
 
-
   //*User creation
       let userCreated = await userModel.create(reqBody)
-      res.status(201).send({status:true ,data: {userCreated}})
+      res.status(201).send({status:true , msg: "User created successfulyy",data: userCreated})
   
   } catch (err) {
   res.status(500).send({ msg: "server error", error: err.message });
@@ -104,33 +108,44 @@ const createUser= async function (req, res) {
 
 const userLogin = async function (req, res) {
    try{
-    ///////////////////////////extracting data by Destructuring//////////////////////////
-    const { email, password } = req.body;
-    const dta=req.body;
-    /////////////////checking request body is empty or not(validation part)//////////////
-    if (Object.keys(dta).length == 0)
-        return res.status(400).send({ status: false, msg: "Email and password is required to login" });
 
-    if (!(isValid(email)))
-        return res.status(400).send({ status: false, msg: "Email is required to login" });
-    if (!isValid(password))
-        return res.status(400).send({ status: false, msg: "Password is required to login" });
+    const data = req.body;
 
-    /////////////////cheking in DB /////////////////////////////////////////////////
+    const {email, password} = data
+
+    if (!isValidRequestBody(data)) {
+            return res.status(400).send({ status: false, msg: "Email and password is required to login" })
+        }
+
+    if (!(isValid(email))) {
+        return res.status(400).send({ status: false, msg: "Email is required to login" })
+    }
+
+    if (!(isValidEmail(email))) {
+        return res.status(400).send({ status: false, msg: "Please enter Valid Email" })
+    }
+
+    if (!isValid(password)) {
+        return res.status(400).send({ status: false, msg: "Password is required to login" })
+    }
+
+    if (!isValidPassword(password)) {
+        return res.status(400).send({ status: false, msg: "Please enter Valid Password" })
+    }
+
     const chkUser = await userModel.findOne({ email: email, password: password })
     if (!chkUser) {
         return res.status(404).send({ status: false, message: "Email or Password doesn't match" })
     }
-    //////////////////////////////////Creation of JSON Web Token/////////////////////
+
     const token = jwt.sign({
-        userId: chkUser._id,
-        //batch: "Uranium",
-        //exp: Math.floor(Date.now() / 1000) + (60 * 30),
+        userId: chkUser._id.toString(),
+        name: "User"
     }, "Uranium-Group-23",{expiresIn:"15min"}
     );
-    //////////////////////////Sending created token to client///////////////////
+
     res.setHeader('x-auth-key',token);
-    return res.status(200).send({ status: true, message: 'Success', data:{token} })
+    return res.status(200).send({ status: true, message: 'Login Successfully', data:{token} })
 } 
 catch (err) {
     res.status(500).send({ msg: "server error", error: err.message });

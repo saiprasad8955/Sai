@@ -131,8 +131,6 @@ const createBook = async (req, res) => {
 };
 
 
-
-
 // Get Api For Books
 
 const getAllBooks = async (req, res) => {

@@ -28,10 +28,6 @@ const isValidPhone = function (phone) {
     return /^(\()?\d{3}(\))?(|\s)?\d{3}(|\s)\d{4}$/.test(phone) 
 }
 
-// const isValidPhoneNumber = function (phone) { 
-//     return /^([+]\d{2}[ ])?\d{10}$/.test(phone) 
-         
-// }
 
 const isValidEmail = function (email) {
      return /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)
@@ -45,9 +41,9 @@ const isValidObjectId = function (objectId) {
     return mongoose.Types.ObjectId.isValid(objectId);
   };
 
-//   const check = (value)=>{
-//     return every(ele => typeof(ele) === "string")
-// }
+const check = (value)=>{
+    return value.every(ele => typeof(ele) === "string")
+}
 
 const isValidPincode = function(value) {
     const dv = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/; 
@@ -69,7 +65,7 @@ module.exports = {
     isValidPassword,
     isValidObjectId,
     isValid2,
-    // check,
+    check,
     isValidPincode,
     isValidRating
   };

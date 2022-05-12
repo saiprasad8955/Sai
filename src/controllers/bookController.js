@@ -1,16 +1,13 @@
-
-const mongoose=require('mongoose')
-
 const bookModel = require('../models/bookModel')
 const userModel = require('../models/userModel')
 const reviewModel=require("../models/reviewModel")
-let date=new Date()
 
 const {
     isValid,
     isValid2,
     isValidRequestBody,
-    isValidObjectId
+    isValidObjectId,
+    check
   } = require("../utils/validation")
 
 
@@ -22,8 +19,7 @@ const createBook = async (req, res) => {
         const reqBody = req.body;
 
         // Object Destructing
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews,isDeleted
-        } = reqBody;
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews, isDeleted} = reqBody;
 
         // Check data is coming or not
         if (!isValidRequestBody(reqBody)) {
@@ -101,9 +97,9 @@ const createBook = async (req, res) => {
         }
 
         // Check subcategory is valid or not
-        // if (! check(subcategory)) {
-        //     return res.status(400).send({ status: false, message: 'Enter Valid Subcategory' });
-        // }
+        if (! check(subcategory)) {
+            return res.status(400).send({ status: false, message: 'Enter Valid Subcategory' });
+        }
 
         // Check releasedAt is coming or not
         if (!isValid(releasedAt)) {
@@ -139,7 +135,7 @@ const createBook = async (req, res) => {
 
 
 
-///////////////////// Get Api For Books////////////////////////////////////////
+//------------------------------------- GET BOOKS 
 
 const getAllBooks = async (req, res) => {
 
@@ -148,11 +144,13 @@ const getAllBooks = async (req, res) => {
         // Extract body 
         const reqQuery = req.query;
 
+        
         // Object Destructing 
         const { userId, category, subcategory} = reqQuery;
 
         // If no queries Are Provided then fetch all the book data
         if ( Object.keys(reqQuery).length == 0) {
+
             const bookData = await bookModel.find({ isDeleted: false}).sort({title: 1}).select({ _id: 1, title: 1, excerpt: 1, subcategory:1, userId: 1, category: 1, releasedAt: 1})
             if(! bookData){ 
                  return res.status(404).send({ status: false, message: 'Books Not Found' });
@@ -174,14 +172,15 @@ const getAllBooks = async (req, res) => {
         if ( subcategory && ! check(subcategory)) {
             return res.status(400).send({ status: false, message: 'Subcategory is Required' });
         }
-
        // If the Queries are coming then Find the Data by Queries
         if ( reqQuery ) {
-            let bookData = await bookModel.find({
-                 isDeleted: false, 
-                 $or: [{ userId: userId }, { category: category }, { subcategory: subcategory }]})
+
+            let bookData = await bookModel.find(
+                { isDeleted: false , $or: [{ userId: userId }, { category: category }, { subcategory: subcategory } ] })
                 .sort({ title: 1 })
                 .select({ _id: 1, title: 1, excerpt: 1, userId: 1,  subcategory:1, category: 1, releasedAt: 1, reviews: 1 })
+
+                // problem in that deleted documents are not showing error msg
             if (! bookData) {
                 return res.status(404).send({ status: false, message: 'Books Not Found With these Filters' });
             }
@@ -195,16 +194,18 @@ const getAllBooks = async (req, res) => {
 }
 
 
-
-///////////////////////////////////get books review API///////////////////
+//------------------------------------- GET BOOKS BY ID
 
 const getBookById = async function (req, res) {
     try {
         const bookId = req.params.bookId;
-        
-        if(!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, msg: "Enter a valid bookId" })
 
-        let findBook = await bookModel.findOne({_id:bookId,isDeleted:false})
+        // Validate the Book ID
+        if(!isValidObjectId(bookId)) {
+        return res.status(400).send({ status: false, msg: "Enter a valid bookId" })
+        }
+
+        let findBook = await bookModel.findOne({ _id:bookId, isDeleted:false })
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
         }
@@ -223,7 +224,7 @@ const getBookById = async function (req, res) {
 }
 
 
-//////////////////////////// //////////update API////////////////////////////////
+//------------------------------------- UPDATE BOOK BY ID
 
 
 const updateBook=async function(req,res){

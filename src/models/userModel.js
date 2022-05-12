@@ -30,7 +30,9 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        minlength: 8,
+        maxlength: 15
     },
     address: {
         street: {

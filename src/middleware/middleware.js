@@ -13,7 +13,7 @@ const authentication = async function(req,res,next){
     let token = req.headers["x-Api-key"]
 
     if(!token) { token= req.headers["x-api-key"] }
-
+    
     //If no token is present in the request header return error
     if (!token) return res.status(401).send({ status: false, msg: "Token must be present" });
 

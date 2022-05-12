@@ -173,12 +173,12 @@ const deleteReview = async function (req, res) {
 
         const checkReviewCount = await reviewModel.find({bookId: bookId, isDeleted: false}).count()
 
-        const decBookReeviewCount = await bookModel.findOneAndUpdate(
+        const decBookReviewCount = await bookModel.findOneAndUpdate(
             {_id: bookId}, 
             {$set: {reviews: checkReviewCount }},
             {new: true})
         
-            const{...data} = decBookReeviewCount;
+            const{...data} = decBookReviewCount;
             data._doc.reviewsData =  deletedReview;
         
         return res.status(200).send({status:true, message:"Review Deleted Successfully", data: data._doc})
@@ -186,7 +186,6 @@ const deleteReview = async function (req, res) {
     res.status(500).send({ msg: "server error", error: err.message });
     }
 }
-
 
 module.exports.addReview = addReview
 module.exports.updateReview = updateReview

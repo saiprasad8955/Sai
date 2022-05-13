@@ -14,7 +14,7 @@ router.post("/login",userController.userLogin)
 // PROTECTED API's
 
 router.post("/books",mw.authentication,bookController.createBook)
-router.get("/books"/*,mw.authentication*/,bookController.getAllBooks)
+router.get("/books1"/*,mw.authentication*/,bookController.getAllBooks)
 router.get("/get/:bookId"/*,mw.authentication*/,bookController.getBookById)
 router.put("/books/:bookId",mw.authentication,mw.authorization,bookController.updateBook)
 router.delete("/books/:bookId",mw.authentication,mw.authorization,bookController.deleteBook)
@@ -22,9 +22,9 @@ router.delete("/books/:bookId",mw.authentication,mw.authorization,bookController
 //-----------------------------------Review API's
 // PROTECTED API's
 
-router.post("/books/:bookId/review", mw.authentication, reviewController.addReview)
-router.put("/books/:bookId/review/:reviewId", mw.authentication, reviewController.updateReview)
-router.delete("/books/:bookId/review/:reviewId", mw.authentication, reviewController.deleteReview)
+router.post("/books/:bookId/review", reviewController.addReview)
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 
 module.exports =  router ;

@@ -140,56 +140,65 @@ const createBook = async (req, res) => {
 const getAllBooks = async (req, res) => {
 
     try {
-        
+
         // Extract body 
         const reqQuery = req.query;
-
-        
+    console.log(reqQuery);
         // Object Destructing 
-        const { userId, category, subcategory} = reqQuery;
-
+        const { userId, category, subcategory } = reqQuery;
+    
         // If no queries Are Provided then fetch all the book data
-        if ( Object.keys(reqQuery).length == 0) {
-
-            const bookData = await bookModel.find({ isDeleted: false}).sort({title: 1}).select({ _id: 1, title: 1, excerpt: 1, subcategory:1, userId: 1, category: 1, releasedAt: 1})
-            if(! bookData){ 
-                 return res.status(404).send({ status: false, message: 'Books Not Found' });
-            }
-            return res.status(200).send({ status: true,  message: 'Books Lists', data: { bookData } })
+        if (Object.getOwnPropertyNames(reqQuery).length == 0) {
+    
+          // find the bookData by query
+          const bookData = await bookModel.find({ isDeleted: false }).sort({ title: 1 }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
+    
+          // If Queried Book Not Found then send error   
+          if (!bookData) {
+            return res.status(404).send({ status: false, message: 'Books Not Found' });
+          }
+          else {
+            return res.status(200).send({ status: true, message: 'Books Lists', data: { bookData } })
+          }
         }
-
-        // If user ID is coming then valid it
-        if ( userId && ! isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, message: 'Please enter Valid User ID' });
+    
+        // If userID is coming then valid it 
+        if (userId && !isValidObjectId(userId.trim())) {
+          return res.status(400).send({ status: false, message: 'Please enter Valid User ID' });
         }
-
-        // If category is coming then valid it
-        if ( category && ! isValid2(category)) {
-            return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
+    
+        // If category is coming then valid it 
+        if (category && !isValid2(category.trim())) {
+          return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
         }
-
-        // If subcategory is coming then valid it
-        if ( subcategory && ! check(subcategory)) {
-            return res.status(400).send({ status: false, message: 'Subcategory is Required' });
+    
+        // If subcategory is coming then valid it 
+        if (subcategory && ! check(subcategory)) {
+          return res.status(400).send({ status: false, message: 'Subcategory is Required' });
         }
-       // If the Queries are coming then Find the Data by Queries
-        if ( reqQuery ) {
-
-            let bookData = await bookModel.find(
-                { isDeleted: false , $or: [{ userId: userId }, { category: category }, { subcategory: subcategory } ] })
-                .sort({ title: 1 })
-                .select({ _id: 1, title: 1, excerpt: 1, userId: 1,  subcategory:1, category: 1, releasedAt: 1, reviews: 1 })
-
-                // problem in that deleted documents are not showing error msg
-            if (! bookData) {
-                return res.status(404).send({ status: false, message: 'Books Not Found With these Filters' });
-            }
-            return res.status(200).send({ status: true, message: 'Book Lists', data: { bookData } })
+    
+        console.log(subcategory);
+        // If the Queries are coming then Find the Data by Queries
+        if (reqQuery) {
+          let bookData = await bookModel.find(
+            { isDeleted: false, $or: [{ userId: userId }, { category: category }, { subcategory: subcategory }] })
+            .sort({ title: 1 })
+            .select({ _id: 1, title: 1, excerpt: 1, userId: 1, subcategory: 1, category: 1, releasedAt: 1, reviews: 1 })
+    
+          console.log(bookData);
+          // If Queried Book Not Found then send error   
+          if (! bookData) {
+            return res.status(404).send({ status: false, message: 'Books Not Found With these Filters or might be deleted ' });
+          }
+    
+          // After all Send book in response
+          return res.status(200).send({ status: true, message: 'Book Lists', data: bookData })
         }
-
-    } catch (err) {
+    
+      } catch (err) {
         return res.status(500).send({ status: false, msg: err.msg })
-    }
+      }
+    
 
 }
 
@@ -241,16 +250,20 @@ const updateBook=async function(req,res){
         });
       }
 
-      //////////validations///////////////////
+    //////////validations///////////////////
     if (!isValid(title)) {
         return res.status(400).send({ status: false, message: 'title is Required' });
     }
-        if (!isValid(ISBN)) {
+
+    if (!isValid(ISBN)) {
         return res.status(400).send({ status: false, message: 'ISBN is Required' });
     }
+
     if (!isValid(excerpt)) {
         return res.status(400).send({ status: false, message: 'excerpt is Required' });
-    }if (!isValid(releasedAt)) {
+    }
+
+    if (!isValid(releasedAt)) {
         return res.status(400).send({ status: false, message: 'releasedAt is Required' });
     }
 

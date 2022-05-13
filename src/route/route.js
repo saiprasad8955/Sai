@@ -22,9 +22,8 @@ router.delete("/books/:bookId",mw.authentication,mw.authorization,bookController
 //-----------------------------------Review API's
 // PROTECTED API's
 
-router.post("/books/:bookId/review", mw.authentication, reviewController.addReview)
-router.put("/books/:bookId/review/:reviewId", mw.authentication, reviewController.updateReview)
-router.delete("/books/:bookId/review/:reviewId", mw.authentication, reviewController.deleteReview)
-
+router.post("/books/:bookId/review", reviewController.addReview)
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 module.exports =  router ;

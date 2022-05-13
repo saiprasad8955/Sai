@@ -1,4 +1,5 @@
 
+const { isValidObjectId } = require("mongoose")
 const bookModel = require("../models/bookModel")
 const reviewModel = require("../models/reviewModel")
 const {
@@ -10,7 +11,7 @@ const {
 
 // POST /books/:bookId/review
 const addReview = async function (req, res){
-    try {
+     try {
         const reqBody = req.body
         
         if(!isValidRequestBody(reqBody)) {
@@ -19,8 +20,8 @@ const addReview = async function (req, res){
   
         const bookId = req.params.bookId;;
 
-        if (!isValid(bookId)) {
-            return res.status(400).send({ status: false, msg: "Book ID is Required" });
+        if (!isValidObjectId(bookId)) {
+            return res.status(400).send({ status: false, msg: "Please Enter Valid Book ID" });
         }
 
         const bookData = await bookModel.findOne({ _id: bookId, isDeleted: false})
@@ -50,13 +51,14 @@ const addReview = async function (req, res){
             return res.status(400).send({ status: false, msg: "Please enter Valid Name" })
         }
  
+        reqBody.bookId = bookId;
         const newReview = await reviewModel.create(reqBody)
 
         const checkReviewCount = await reviewModel.find({bookId: bookId, isDeleted: false}).count()
 
         const incBookReviewCount = await bookModel.findOneAndUpdate(
             {_id: bookId},
-            {$set : {reviews : checkReviewCount}}, 
+            {$set : {reviews : checkReviewCount, reviewedAt: new Date()}}, 
             {new: true})
 
          // use spread operator for adding keys
@@ -64,7 +66,7 @@ const addReview = async function (req, res){
 
          // adding key reviewsaData;
          data._doc.reviewsData =  newReview;
-
+         
          res.status(201).send({status:true ,msg:"Review added Successfully",data: data._doc})
     } catch (err) {
     res.status(500).send({ msg: "server error", error: err.message });
@@ -85,6 +87,14 @@ const updateReview = async function (req, res){
 
         const bookId = req.params.bookId;
         const reviewId = req.params.reviewId
+
+        if (!isValidObjectId(bookId)) {
+            return res.status(400).send({ status: false, msg: "Please Enter Valid Book ID" });
+        }
+
+        if (!isValidObjectId(reviewId)) {
+            return res.status(400).send({ status: false, msg: "Please Enter Valid Review ID" });
+        }
 
         const bookData = await bookModel.findOne({ _id: bookId ,isDeleted: false})
         if (!bookData) {
@@ -148,6 +158,14 @@ const deleteReview = async function (req, res) {
         const bookId = req.params.bookId;
         const reviewId = req.params.reviewId
 
+        if (!isValidObjectId(bookId)) {
+            return res.status(400).send({ status: false, msg: "Please Enter Valid Book ID" });
+        }
+
+        if (!isValidObjectId(reviewId)) {
+            return res.status(400).send({ status: false, msg: "Please Enter Valid Review ID" });
+        }
+        
         const bookData = await bookModel.findOne({ _id: bookId ,isDeleted: false})
         if (!bookData) {
             return res.status(404).send({ status: false, message: "Book does not Exist, Please enter Valid Book ID" })

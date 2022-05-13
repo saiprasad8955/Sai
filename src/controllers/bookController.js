@@ -2,6 +2,7 @@ const bookModel = require('../models/bookModel')
 const userModel = require('../models/userModel')
 const reviewModel=require("../models/reviewModel")
 
+
 const {
     isValid,
     isValid2,
@@ -229,10 +230,10 @@ const getBookById = async function (req, res) {
 
 const updateBook=async function(req,res){
     try{
+        console.log("hi u are on update book")
         const bookId = req.params.bookId;
-       
-        
-    const {title,excerpt,releasedAt,ISBN}=req.body;
+            
+    const {title,excerpt,ISBN}=req.body;
     
     if (Object.keys(req.body).length == 0) {
         return res.status(400).send({
@@ -250,15 +251,11 @@ const updateBook=async function(req,res){
     }
     if (!isValid(excerpt)) {
         return res.status(400).send({ status: false, message: 'excerpt is Required' });
-    }if (!isValid(releasedAt)) {
-        return res.status(400).send({ status: false, message: 'releasedAt is Required' });
     }
 
     
-    const chktitle=await bookModel.findOne({title:title})
-    // if(chktitle.isDeleted==true){
-    //     return res.status(400).send({status:false,message:"123456780087654"})
-    // }
+    const chktitle=await bookModel.findOne({title:title,isDeleted:false})
+
     if (chktitle) {
         return res.status(400).send({ status: false, message: `"${title}" title should be unique please try with another option` })
     }
@@ -270,7 +267,7 @@ const updateBook=async function(req,res){
 
     const chkBook=await bookModel.findOneAndUpdate(
         {_id:bookId,isDeleted:false},
-        {$set:{title:title,excerpt:excerpt,ISBN:ISBN},releasedAt:date },
+        {$set:{title:title,excerpt:excerpt,ISBN:ISBN},releasedAt:new Date() },
         {new:true}
         )
 

@@ -14,9 +14,9 @@ router.post("/login",userController.userLogin)
 // PROTECTED API's
 
 router.post("/books",mw.authentication,bookController.createBook)
-router.get("/books"/*,mw.authentication*/,bookController.getAllBooks)
-router.get("/get/:bookId"/*,mw.authentication*/,bookController.getBookById)
-router.put("/books/:bookId",mw.authentication,mw.authorization,bookController.updateBook)
+router.get("/books",mw.authentication,bookController.getAllBooks)
+router.get("/get/:bookId",mw.authentication,bookController.getBookById)
+router.put("/books/:bookId",console.log("hi u are on update book"),mw.authentication,mw.authorization,bookController.updateBook)
 router.delete("/books/:bookId",mw.authentication,mw.authorization,bookController.deleteBook)
 
 //-----------------------------------Review API's

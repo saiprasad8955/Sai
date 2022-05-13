@@ -11,7 +11,7 @@ const {
   } = require("../utils/validation")
 
 
-//-------------------------------------------create Book
+//------------------------------------- CREATE BOOK
 const createBook = async (req, res) => {
 
     try {
@@ -197,8 +197,6 @@ const getAllBooks = async (req, res) => {
   }
 }
 
-
-
 //------------------------------------- GET BOOKS BY ID
 const getBookById = async function (req, res) {
     try {
@@ -227,10 +225,7 @@ const getBookById = async function (req, res) {
     }
 }
 
-
 //------------------------------------- UPDATE BOOK BY ID
-
-
 const updateBook=async function(req,res){
     try{
         const bookId = req.params.bookId;
@@ -294,12 +289,7 @@ catch(err){
 }
 }
 
-
-
-//////////////////////////////////////////delete Book//////////////////////////
-
-
-
+//------------------------------------- DELETE BOOK BY ID
 const deleteBook=async function(req,res){
     try{
         const bookId = req.params.bookId;

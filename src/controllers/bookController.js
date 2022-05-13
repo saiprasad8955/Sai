@@ -126,7 +126,7 @@ const createBook = async (req, res) => {
 
         // After All Successful Validation then Create Book
         const bookDetails = await bookModel.create(reqBody)
-        return res.status(500).send({ status: true, message: 'successfully created ', data: { bookDetails } })
+        return res.status(201).send({ status: true, message: 'successfully created ', data: { bookDetails } })
             
     } catch (err) {
         console.log(err)
@@ -216,8 +216,9 @@ const getBookById = async function (req, res) {
             findBook,
             "reviewsData": review
         }
+        
 
-        return res.status(200).send({status:true,message:"Books list", data:{data1}})
+        return res.status(200).send({status:true,message:"Books list", data:data1})
     }
     catch(err){
         return res.status(500).send({ status: false, message: "server error", error: err.message });
@@ -301,7 +302,7 @@ const deleteBook=async function(req,res){
         
         const chkBook=await bookModel.findOneAndUpdate(
             {_id:bookId,isDeleted:false},
-            {$set:{isDeleted:true},deletedAt:date }
+            {$set:{isDeleted:true},deletedAt:new Date() }
             )
         if(!chkBook){
             return res.status(404).send({status:false,message:"Book not found or already deleted please try with another bookID"})

@@ -141,7 +141,7 @@ const userLogin = async function (req, res) {
     const token = jwt.sign({
         userId: chkUser._id.toString(),
         name: "User"
-    }, "Uranium-Group-23",{expiresIn:"15min"}
+    }, "Uranium-Group-23",{expiresIn:"1d"}
     );
 
     res.setHeader('x-auth-key',token);

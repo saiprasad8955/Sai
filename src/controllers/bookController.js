@@ -232,15 +232,22 @@ const updateBook=async function(req,res){
         const bookId = req.params.bookId;
        
         
-    const {title,excerpt,releasedAt,ISBN}=req.body;
+    const {title,excerpt,ISBN}=req.body;
     
-    if (Object.keys(req.body).length == 0) {
-        return res.status(400).send({
-          status: false,
-          msg: "Invalid request parameters. Please provide blog details",
-        });
+    if (!isValid(bookId)) {
+        return res.status(400).send({ status: false, message: 'BookId is Required' });
+    }
+
+      if (!isValidRequestBody(req.body)) {
+        return res.status(400).send({status: false, msg: "Invalid request parameters. Please provide blog details"});
       }
 
+
+      const chkBook1 = await bookModel.findById(bookId)
+      if(chkBook1.isDeleted == true){ 
+        return res.status(404).send({ status: false, message: 'No Data Found' });
+      }
+          
       //////////validations///////////////////
     if (!isValid(title)) {
         return res.status(400).send({ status: false, message: 'title is Required' });
@@ -250,8 +257,6 @@ const updateBook=async function(req,res){
     }
     if (!isValid(excerpt)) {
         return res.status(400).send({ status: false, message: 'excerpt is Required' });
-    }if (!isValid(releasedAt)) {
-        return res.status(400).send({ status: false, message: 'releasedAt is Required' });
     }
 
     
@@ -269,17 +274,12 @@ const updateBook=async function(req,res){
     }
 
     const chkBook=await bookModel.findOneAndUpdate(
-        {_id:bookId,isDeleted:false},
-        {$set:{title:title,excerpt:excerpt,ISBN:ISBN},releasedAt:date },
+        {_id:bookId},
+        {$set:{title:title,excerpt:excerpt,ISBN:ISBN},releasedAt:new Date()},
         {new:true}
         )
-
-        if (!chkBook) {
-            return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
-        }
         
   return res.status(201).send({status:true, message:"Updated",data:chkBook})
-
 }
 catch(err){
     return res.status(500).send({ status: false, message: "server error", error: err.message });
@@ -295,22 +295,21 @@ catch(err){
 const deleteBook=async function(req,res){
     try{
         const bookId = req.params.bookId;
-        if(!bookId){
-            return res.status(400).send({status:false,message:"bookId is required"})
-        }
-        
-        if(!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, msg: "Enter a valid book Id" })
       
-        
+        if(!isValid(bookId)) return res.status(400).send({ status: false, msg: "Book Id is Required" })
+
+        if(!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "Enter a valid book Id" })
+      
         const chkBook=await bookModel.findOneAndUpdate(
             {_id:bookId,isDeleted:false},
-            {$set:{isDeleted:true},deletedAt:date }
+            {$set:{isDeleted:true},deletedAt:new Date() },
+            {new : true}
             )
         if(!chkBook){
             return res.status(404).send({status:false,message:"Book not found or already deleted please try with another bookID"})
         }
 
-        return res.status(200).send({status:true,message:"deleted"})
+        return res.status(200).send({status:true,message:"deleted", data:chkBook})
     }
     catch(err){
         return res.status(500).send({ status: false, message: "server error", error: err.message });

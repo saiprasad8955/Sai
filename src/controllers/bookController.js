@@ -256,12 +256,7 @@ const updateBook=async function(req,res){
     if (!isValid(excerpt)) {
         return res.status(400).send({ status: false, message: 'excerpt is Required' });
     }
-
-    if (!isValid(releasedAt)) {
-        return res.status(400).send({ status: false, message: 'releasedAt is Required' });
-    }
-
-    
+   
     const chktitle=await bookModel.findOne({title:title,isDeleted:false})
 
     if (chktitle) {

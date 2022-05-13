@@ -26,7 +26,7 @@ const addReview = async function (req, res){
 
         const bookData = await bookModel.findOne({ _id: bookId, isDeleted: false})
         if (!bookData) {
-            return response.status(404).send({ status: false, msg: "Book does not Exist, Please enter Valid Book ID" });
+            return res.status(404).send({ status: false, msg: "Book does not Exist, Please enter Valid Book ID" });
         }
        
         const { review, rating, reviewedBy} = reqBody

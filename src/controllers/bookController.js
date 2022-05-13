@@ -125,7 +125,7 @@ const createBook = async (req, res) => {
 
         // After All Successful Validation then Create Book
         const bookDetails = await bookModel.create(reqBody)
-        return res.status(500).send({ status: true, message: 'successfully created ', data: { bookDetails } })
+        return res.status(500).send({ status: true, message: 'successfully created ', data: bookDetails})
             
     } catch (err) {
         console.log(err)
@@ -133,10 +133,7 @@ const createBook = async (req, res) => {
 };
 }
 
-
-
 //------------------------------------- GET BOOKS 
-
 const getAllBooks = async (req, res) => {
 
     try {
@@ -202,9 +199,7 @@ const getAllBooks = async (req, res) => {
 
 }
 
-
 //------------------------------------- GET BOOKS BY ID
-
 const getBookById = async function (req, res) {
     try {
         const bookId = req.params.bookId;

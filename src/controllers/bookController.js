@@ -6,8 +6,8 @@ const {
     isValid,
     isValid2,
     isValidRequestBody,
-    isValidObjectId,
-    check
+    isValidObjectId
+    
   } = require("../utils/validation")
 
 
@@ -136,68 +136,68 @@ const createBook = async (req, res) => {
 //------------------------------------- GET BOOKS 
 const getAllBooks = async (req, res) => {
 
-    try {
+    try{
+    // Extract body 
+    const reqQuery = req.query;
 
-        // Extract body 
-        const reqQuery = req.query;
-    console.log(reqQuery);
-        // Object Destructing 
-        const { userId, category, subcategory } = reqQuery;
-    
-        // If no queries Are Provided then fetch all the book data
-        if (Object.getOwnPropertyNames(reqQuery).length == 0) {
-    
-          // find the bookData by query
-          const bookData = await bookModel.find({ isDeleted: false }).sort({ title: 1 }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
-    
-          // If Queried Book Not Found then send error   
-          if (!bookData) {
-            return res.status(404).send({ status: false, message: 'Books Not Found' });
-          }
-          else {
-            return res.status(200).send({ status: true, message: 'Books Lists', data: { bookData } })
-          }
-        }
-    
-        // If userID is coming then valid it 
-        if (userId && !isValidObjectId(userId.trim())) {
-          return res.status(400).send({ status: false, message: 'Please enter Valid User ID' });
-        }
-    
-        // If category is coming then valid it 
-        if (category && !isValid2(category.trim())) {
-          return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
-        }
-    
-        // If subcategory is coming then valid it 
-        if (subcategory && ! check(subcategory)) {
-          return res.status(400).send({ status: false, message: 'Subcategory is Required' });
-        }
-    
-        console.log(subcategory);
-        // If the Queries are coming then Find the Data by Queries
-        if (reqQuery) {
-          let bookData = await bookModel.find(
-            { isDeleted: false, $or: [{ userId: userId }, { category: category }, { subcategory: subcategory }] })
-            .sort({ title: 1 })
-            .select({ _id: 1, title: 1, excerpt: 1, userId: 1, subcategory: 1, category: 1, releasedAt: 1, reviews: 1 })
-    
-          console.log(bookData);
-          // If Queried Book Not Found then send error   
-          if (! bookData) {
-            return res.status(404).send({ status: false, message: 'Books Not Found With these Filters or might be deleted ' });
-          }
-    
-          // After all Send book in response
-          return res.status(200).send({ status: true, message: 'Book Lists', data: bookData })
-        }
-    
-      } catch (err) {
-        return res.status(500).send({ status: false, msg: err.msg })
+    // Object Destructing 
+    const { userId, category, subcategory } = reqQuery;
+
+    // If no queries Are Provided then fetch all the book data
+    if (Object.getOwnPropertyNames(reqQuery).length == 0) {
+
+      // find the bookData by query
+      const bookData = await bookModel.find({ isDeleted: false }).sort({ title: 1 }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
+
+      // If Queried Book Not Found then send error   
+      if (!bookData) {
+        return res.status(404).send({ status: false, message: 'Books Not Found' });
       }
-    
+      
+      return res.status(200).send({ status: true, message: 'Books Lists', data: bookData  })
+    }
 
+    // If userID is coming then valid it 
+    if (userId && !validator.isValidObjectId(userId.trim())) {
+      return res.status(400).send({ status: false, message: 'Please enter Valid User ID' });
+    }
+
+    // If category is coming then valid it 
+    if (category && !validator.isValid2(category.trim())) {
+      return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
+    }
+
+    // if second subcategory is coming then concatenate it
+    if(subcategory){
+      reqQuery.subcategory =   { $all: [].concat(req.query.subcategory) }
+    }
+
+    // Set isDeleted false to reqQuery
+    let condition = { isDeleted: false }
+    let data = Object.assign(reqQuery, condition)
+    
+    // If the Queries are coming then Find the Data by Queries
+    if (reqQuery) {
+
+      let bookData = await bookModel.find(data)
+        .sort({ title: 1 })
+        .select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
+
+      // If Queried Book Not Found then send error   
+      if (! bookData.length) {
+        return res.status(404).send({ status: false, message: 'Books Not Found With these Filters or might be deleted ' });
+      }
+
+      // After all Send book in response
+      return res.status(200).send({ status: true, message: 'Book Lists', data: bookData })
+    }
+
+  } catch (err) {
+    return res.status(500).send({ status: false, msg: err.msg })
+  }
 }
+
+
 
 //------------------------------------- GET BOOKS BY ID
 const getBookById = async function (req, res) {

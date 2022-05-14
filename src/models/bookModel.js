@@ -7,13 +7,16 @@ const bookSchema = new mongoose.Schema({
         type: String, 
         required: true,
         trim: true, 
-        lowercase:true
+        lowercase: true,
+        unique: true
     },
+
     excerpt: { 
         type: String, 
         required: true, 
         trim: true 
     },
+
     userId: { 
         type: ObjectId, 
         ref:"User", 
@@ -54,8 +57,7 @@ const bookSchema = new mongoose.Schema({
     },
 
     releasedAt: { 
-        type: Date, 
-        required: true 
+        type: Date
     },/*FORMAT YYYY-MM-DD*/ 
 
 }, { timestamps: true });

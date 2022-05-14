@@ -32,6 +32,11 @@ const createBook = async (req, res) => {
             return res.status(400).send({ status: false, message: 'Title is Required' });
         }
 
+        // check title is valid or not
+        if(! isValid2(title)){
+            return res.status(400).send({ status: false, message: "Please Enter the Valid Title" })
+        }
+
         // Check duplicate title
         const duplicateTitle = await bookModel.findOne({ title: title })
         if (duplicateTitle) {
@@ -60,7 +65,7 @@ const createBook = async (req, res) => {
 
         // Check Duplicate UserId
         const duplicateUserId = await userModel.findOne({ userId: userId });
-        if (!duplicateUserId) {
+        if (! duplicateUserId) {
             return res.status(400).send({ status: true, message: "User ID is Not exists in our Database" })
         }
 
@@ -217,7 +222,7 @@ const getBookById = async function (req, res) {
 
         const  { ...data} = findBook;
         data._doc.reviewsData = review;
-        
+
         return res.status(200).send({ status: true, message: "Books list", data: data.toObject() })
     }
     catch (err) {

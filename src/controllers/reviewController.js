@@ -9,7 +9,7 @@ const {
     isValidRating,
   } = require("../utils/validation")
 
-// POST /books/:bookId/review
+//------------------------------------- ADD REVIEW
 const addReview = async function (req, res){
      try {
         const reqBody = req.body
@@ -73,9 +73,7 @@ const addReview = async function (req, res){
     }
 }
 
-
-//PUT /books/:bookId/review/:reviewId
-
+//------------------------------------- UPDATE REVIEW 
 const updateReview = async function (req, res){
     try {
 
@@ -110,7 +108,7 @@ const updateReview = async function (req, res){
             return res.status(400).send({ status: false, msg: "Review does not Exist with this BookId" });
         }
 
-        const { review, rating, reviewedBy} = reqBody
+        const { review, rating, reviewedBy } = reqBody
 
         if (review && !isValid2(review)) {
             return res.status(400).send({ status: false, msg: "Please enter Valid Review" })
@@ -149,9 +147,7 @@ const updateReview = async function (req, res){
     }
 }
 
-
-//DELETE /books/:bookId/review/:reviewId
-
+//------------------------------------- DELETE REVIEW
 const deleteReview = async function (req, res) {
     try {
 
@@ -205,8 +201,7 @@ const deleteReview = async function (req, res) {
     }
 }
 
-module.exports.addReview = addReview
-module.exports.updateReview = updateReview
-module.exports.deleteReview = deleteReview
+module.exports ={ addReview, updateReview, deleteReview }
+
 
  

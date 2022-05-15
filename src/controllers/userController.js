@@ -31,7 +31,6 @@ const createUser = async function (req, res) {
         const { title, name, phone, email, password, address } = req.body
 
         //Params Validation
-
         if (!isValid(title)) {
             return res.status(400).send({ status: false, msg: "Title is required" })
         }
@@ -65,7 +64,9 @@ const createUser = async function (req, res) {
         if (!isValid(email)) {
             return res.status(400).send({ status: false, msg: "Email is required" })
         }
-        if (!isValidEmail(email)) return res.status(400).send({ status: false, msg: "Please enter Valid Email" })
+        if (! isValidEmail(email)) {
+            return res.status(400).send({ status: false, msg: "Please enter Valid Email" })
+        }
 
         const isEmailAlreadyUsed = await userModel.findOne({ email: email });
         if (isEmailAlreadyUsed) {

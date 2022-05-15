@@ -49,13 +49,14 @@ if(req.params.hasOwnProperty('bookId')){
      }
     userLoggin = bookdata.userId.toString(); 
 }
+
 if(req.body.hasOwnProperty('userId')) { 
 
     if(!isValidObjectId(req.body.userId)) return res.status(400).send({ status: false, msg: "Enter a valid userId" })
     userLoggin = req.body.userId; 
   }
 if(loggedInUser!=userLoggin){
- return res.status(403).send({status:false,msg:"Authorization fail"})
+ return res.status(403).send({status:false,msg:"Authorization is failed"})
 }
 console.log("authorization suceess")
 next()

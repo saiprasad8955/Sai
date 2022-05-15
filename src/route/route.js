@@ -5,10 +5,11 @@ const bookController=require('../controllers/bookController')
 const reviewController = require('../controllers/reviewController')
 const mw = require('../middleware/middleware')
 
+
 //-----------------------------------User API's
 
-router.post("/register",userController.createUser)
-router.post("/login",userController.userLogin)
+router.post("/register", userController.createUser)
+router.post("/login", userController.userLogin)
 
 //-----------------------------------Book API's
 // PROTECTED API's

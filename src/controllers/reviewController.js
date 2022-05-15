@@ -1,7 +1,9 @@
 
 const { isValidObjectId } = require("mongoose")
+
 const bookModel = require("../models/bookModel")
 const reviewModel = require("../models/reviewModel")
+
 const {
     isValid,
     isValid2,
@@ -25,11 +27,11 @@ const addReview = async function (req, res){
         }
 
         const bookData = await bookModel.findOne({ _id: bookId, isDeleted: false})
-        if (!bookData) {
+        if (! bookData) {
             return res.status(404).send({ status: false, msg: "Book does not Exist, Please enter Valid Book ID" });
         }
        
-        const { review, rating, reviewedBy} = reqBody
+        const { review, rating, reviewedBy } = reqBody
 
         if (review && !isValid2(review)) {
             return res.status(400).send({ status: false, msg: "Please enter Valid Review" })
@@ -48,15 +50,16 @@ const addReview = async function (req, res){
         }
 
         if (!isValid2(reviewedBy)) {
-            return res.status(400).send({ status: false, msg: "Please enter Valid Name" })
+            return res.status(400).send({ status: false, msg: "Please enter Valid Reviwers's Name" })
         }
  
         // Add Reviewed At key
         reqBody.reviewedAt = new Date().toISOString();
         reqBody.bookId = bookId;
-        const newReview = await reviewModel.create(reqBody)
 
-        const checkReviewCount = await reviewModel.find({bookId: bookId, isDeleted: false}).count()
+        const newReview = await reviewModel.create( reqBody );
+
+        const checkReviewCount = await reviewModel.find({bookId: bookId, isDeleted: false}).count();
 
         const incBookReviewCount = await bookModel.findOneAndUpdate(
             {_id: bookId},
@@ -64,12 +67,13 @@ const addReview = async function (req, res){
             {new: true})
 
          // use spread operator for adding keys
-         const{...data} = incBookReviewCount;
+         const{ ...data } = incBookReviewCount;
 
          // adding key reviewsaData;
          data._doc.reviewsData =  newReview;
          
-         res.status(201).send({status:true ,msg:"Review added Successfully",data: data._doc})
+         
+         return res.status(201).send({status:true ,msg:"Review added Successfully",data: data._doc})
     } catch (err) {
     res.status(500).send({ msg: "server error", error: err.message });
     }
@@ -129,7 +133,7 @@ const updateReview = async function (req, res){
         }
 
         if (!isValid2(reviewedBy)) {
-            return res.status(400).send({ status: false, msg: "Please enter Valid Name" })
+            return res.status(400).send({ status: false, msg: "Please enter Valid Reviewers Name" })
         }
 
         const reviewDetails = await reviewModel.findOneAndUpdate(
@@ -195,6 +199,7 @@ const deleteReview = async function (req, res) {
             {new: true})
         
             const{...data} = decBookReviewCount;
+            
             data._doc.reviewsData =  deletedReview;
         
         return res.status(200).send({status:true, message:"Review Deleted Successfully", data: data._doc});

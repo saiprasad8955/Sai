@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+
     password: {
         type: String,
         required: true,
@@ -34,6 +35,7 @@ const userSchema = new mongoose.Schema({
         minlength: 8,
         maxlength: 15
     },
+    
     address: {
         street: {
             type: String,

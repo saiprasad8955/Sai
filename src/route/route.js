@@ -16,7 +16,7 @@ router.post("/login",userController.userLogin)
 router.post("/books",mw.authentication,bookController.createBook)
 router.get("/books",mw.authentication,bookController.getAllBooks)
 router.get("/books/:bookId",mw.authentication,bookController.getBookById)
-router.put("/books/:bookId",bookController.updateBook)
+router.put("/books/:bookId",mw.authentication,mw.authorization,bookController.updateBook)
 router.delete("/books/:bookId",mw.authentication,mw.authorization,bookController.deleteBook)
 
 //-----------------------------------Review API's

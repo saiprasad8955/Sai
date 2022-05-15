@@ -51,6 +51,8 @@ const addReview = async function (req, res){
             return res.status(400).send({ status: false, msg: "Please enter Valid Name" })
         }
  
+        // Add Reviewed At key
+        reqBody.reviewedAt = new Date().toISOString();
         reqBody.bookId = bookId;
         const newReview = await reviewModel.create(reqBody)
 
@@ -58,7 +60,7 @@ const addReview = async function (req, res){
 
         const incBookReviewCount = await bookModel.findOneAndUpdate(
             {_id: bookId},
-            {$set : {reviews : checkReviewCount, reviewedAt: new Date()}}, 
+            {$set : {reviews : checkReviewCount}}, 
             {new: true})
 
          // use spread operator for adding keys
@@ -140,7 +142,7 @@ const updateReview = async function (req, res){
 
          // adding key reviewsaData;
         data._doc.reviewsData = reviewDetails ;
-        return res.status(201).send({status:true, message:"Review Updated Successfully", data: data._doc })
+        return res.status(200).send({status:true, message:"Review Updated Successfully", data: data._doc })
     }
     catch(err){
         return res.status(500).send({ status: false, message: "server error", error: err.message });
@@ -178,7 +180,7 @@ const deleteReview = async function (req, res) {
 
         const deletedReview = await reviewModel.findOneAndUpdate(
             {_id: reviewId}, 
-            {$set: {isDeleted: true, deletedAt: new Date() }},
+            {$set: {isDeleted: true}},
             {new: true})
 
         if(!deletedReview){
@@ -195,13 +197,14 @@ const deleteReview = async function (req, res) {
             const{...data} = decBookReviewCount;
             data._doc.reviewsData =  deletedReview;
         
-        return res.status(200).send({status:true, message:"Review Deleted Successfully", data: data._doc})
+        return res.status(200).send({status:true, message:"Review Deleted Successfully", data: data._doc});
+
     } catch (err) {
     res.status(500).send({ msg: "server error", error: err.message });
     }
 }
 
-module.exports ={ addReview, updateReview, deleteReview }
+module.exports = { addReview, updateReview, deleteReview }
 
 
  

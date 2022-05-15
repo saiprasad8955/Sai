@@ -53,6 +53,10 @@ const isValidRating = function(rating) {
     return false
 }
 
+const check =  function (value){
+ return value.every(i=> typeof i === "string"); 
+}
+
 module.exports = {
     isValid,
     isValidTitle,
@@ -63,7 +67,8 @@ module.exports = {
     isValidObjectId,
     isValid2,
     isValidPincode,
-    isValidRating
+    isValidRating,
+    check
   };
 
 

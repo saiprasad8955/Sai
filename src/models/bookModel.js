@@ -57,7 +57,7 @@ const bookSchema = new mongoose.Schema({
     },
 
     releasedAt: { 
-        type: Date
+        type: String
     },/*FORMAT YYYY-MM-DD*/ 
 
 }, { timestamps: true });

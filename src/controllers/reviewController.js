@@ -45,9 +45,6 @@ const addReview = async function (req, res){
             return res.status(400).send({ status: false, msg: "Please Enter Rating between 1-5 Number" });
         }
 
-        if (!isValid(reviewedBy)) {
-            return res.status(400).send({ status: false, msg: "Reviewer's name is Required" });
-        }
 
         if (!isValid2(reviewedBy)) {
             return res.status(400).send({ status: false, msg: "Please enter Valid Reviwers's Name" })

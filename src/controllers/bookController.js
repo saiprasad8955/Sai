@@ -173,7 +173,7 @@ const getAllBooks = async (req, res) => {
             return res.status(400).send({ status: false, message: 'Please Enter a Valid Category' });
         }
 
-        // if second subcategory is coming then concatenate it
+        // // if second subcategory is coming then concatenate it
         if (subcategory) {
             reqQuery.subcategory = { $all: [].concat(req.query.subcategory) }
         }
@@ -181,14 +181,17 @@ const getAllBooks = async (req, res) => {
         // Set isDeleted false to reqQuery
         let condition = { isDeleted: false }
         let data = Object.assign(reqQuery, condition)
-
+        console.log(data);
+        // let data = [{ userId: userId }, { category: category }, { subcategory: subcategory }]
+        
         // If the Queries are coming then Find the Data by Queries
         if (reqQuery) {
-
-            let bookData = await bookModel.find(data)
+        
+        let bookData = await bookModel.find(data/*$or : data, isDeleted : false */)
                 .sort({ title: 1 })
                 .select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
 
+                // console.log(bookData);
             // If Queried Book Not Found then send error   
             if (! bookData.length) {
                 return res.status(404).send({ status: false, message: 'Books Not Found With these Filters or might be deleted ' });
@@ -245,11 +248,6 @@ const updateBook = async function (req, res) {
         if (!isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, message: 'BookId is Not Valid' });
         }
-
-        // if (!isValidRequestBody(req.body)) {
-        //     return res.status(400).send({ status: false, msg: "Invalid request parameters. Please provide blog details" });
-        // }
-
         
         if (!isValidRequestBody(req.body)) {
             return res.status(400).send({ status: false, msg: "Invalid request parameters. Please provide Book Details for updateding" });
@@ -287,7 +285,7 @@ const updateBook = async function (req, res) {
         }
 
         const chkBook = await bookModel.findOneAndUpdate(
-            { _id: bookId },
+            { _id: bookId , isDeleted: false},
             { $set: { title: title, excerpt: excerpt, ISBN: ISBN , releasedAt: releasedAt } },
             { new: true }
         )

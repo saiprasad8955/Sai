@@ -17,4 +17,6 @@ mongoose.connect(
 
 app.use('/',route);
 
-app.listen( 3000 , ()=>{ console.log(chalk.bgMagenta("Express App is running on Port 3000"))})
+app.listen(process.env.PORT || 3000, function () {
+    console.log(" 😍Express app running on port" + (process.env.PORT || 3000));
+  });

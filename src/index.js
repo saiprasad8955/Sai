@@ -4,10 +4,11 @@ const bodyParser = require("body-parser")
 const app = express();
 const chalk = require("chalk");
 const mongoose = require("mongoose")
-
+const multer = require("multer")
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : true }));
+app.use(multer().any());
 
 mongoose.connect(
     "mongodb+srv://Sai0047:rXxgqYKPqwnhcXX7@cluster0.qptsw.mongodb.net/group23DatabaseBook"

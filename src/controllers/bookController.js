@@ -12,6 +12,7 @@ const {
 } = require("../utils/validation")
 
 
+
 //------------------------------------- CREATE BOOK
 const createBook = async (req, res) => {
 
@@ -20,7 +21,7 @@ const createBook = async (req, res) => {
         const reqBody = req.body;
 
         // Object Destructing
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews, isDeleted } = reqBody;
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews, isDeleted, bookCover } = reqBody;
 
         // Check data is coming or not
         if (!isValidRequestBody(reqBody)) {
@@ -123,14 +124,26 @@ const createBook = async (req, res) => {
         if (reviews && (typeof reviews !== 'number')) {
             return res.status(400).send({ status: false, message: "Reviews Must be numbers" })
         }
-
+        
         // Check if isDeleted true
         if (isDeleted === true) {
             return res.status(400).send({ status: false, message: "No Data Should Be Deleted At The Time Of Creation" })
         }
 
+        const finalData = {
+            bookCover,
+            title,
+            excerpt,
+            userId,
+            ISBN,
+            category,
+            subcategory,
+            reviews,
+            releasedAt: releasedAt ? releasedAt: "releasedAt is required",
+        };
+
         // After All Successful Validation then Create Book
-        const bookDetails = await bookModel.create(reqBody)
+        const bookDetails = await bookModel.create(finalData)
         return res.status(201).send({ status: true, message: 'Book Successfully created ', data: bookDetails })
 
     } catch (err) {
